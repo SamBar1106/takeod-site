@@ -2,7 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  let base = env.VITE_BASE || process.env.VITE_BASE || "/daykodee-home/";
+  let base = env.VITE_BASE || process.env.VITE_BASE || "/takeod-site/";
   if (!base.endsWith("/")) base += "/";
 
   return {
