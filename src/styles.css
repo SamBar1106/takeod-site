@@ -487,22 +487,8 @@ html.needs-play .hero__play {
   white-space: nowrap;
 }
 
-.js .pop {
-  opacity: 0;
-}
-
-html.reduce-motion .pop,
-html.show-text .pop,
-html.js.show-text .section__stage {
-  opacity: 1;
-}
-
-html.js.show-text .section__stage {
-  transform: none;
-}
-
 .section {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .section__stage {
@@ -643,16 +629,6 @@ h2 {
 
 .ordering .btn {
   margin-top: 1.4rem;
-}
-
-html.motion-pin .steps {
-  min-height: 16.5rem;
-}
-
-html.motion-pin .step {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
 }
 
 .why {

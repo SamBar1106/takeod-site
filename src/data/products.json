@@ -1,0 +1,72 @@
+{
+  "products": [
+    {
+      "id": "sample-mug",
+      "name": "PLACEHOLDER — Sample Mug",
+      "category": "Mugs",
+      "categorySlug": "mugs",
+      "shopLabel": "Shop Mugs",
+      "priceLabel": "PLACEHOLDER",
+      "description": "Cheerful ceramic mugs for teacher gifts, parent nights and keepsakes families hold on to.",
+      "images": [
+        { "set": "c2", "alt": "Branded ceramic mugs and water bottles" },
+        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 },
+        { "file": "poster-h1-1280.webp", "alt": "Branded water bottles", "width": 1280, "height": 720 }
+      ]
+    },
+    {
+      "id": "sample-shirt",
+      "name": "PLACEHOLDER — Sample Shirt",
+      "category": "Shirts",
+      "categorySlug": "shirts",
+      "shopLabel": "Shop Shirts",
+      "priceLabel": "PLACEHOLDER",
+      "description": "Soft, kid-friendly tees for field trips, picture day and showing center pride.",
+      "images": [
+        { "set": "c1", "alt": "Branded shirts and hats" },
+        { "file": "poster-h4.webp", "alt": "Branded tees", "width": 1280, "height": 720 }
+      ]
+    },
+    {
+      "id": "sample-bag",
+      "name": "PLACEHOLDER — Sample Bag",
+      "category": "Bags",
+      "categorySlug": "bags",
+      "shopLabel": "Shop Bags",
+      "priceLabel": "PLACEHOLDER",
+      "description": "Sturdy totes for take-home folders, art projects and everything in between.",
+      "images": [
+        { "set": "c3", "alt": "Branded tote bags" },
+        { "file": "float-why.webp", "alt": "Branded tote bags", "width": 640, "height": 360 },
+        { "file": "poster-h3.webp", "alt": "Branded bags", "width": 1280, "height": 720 }
+      ]
+    },
+    {
+      "id": "sample-bottle",
+      "name": "PLACEHOLDER — Sample Water Bottle",
+      "category": "Water Bottles",
+      "categorySlug": "water-bottles",
+      "shopLabel": "Shop Bottles",
+      "priceLabel": "PLACEHOLDER",
+      "description": "Kid-sized bottles that make it easy to stay hydrated on the playground and on the go.",
+      "images": [
+        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 },
+        { "set": "c2", "alt": "Branded kid-sized water bottles" },
+        { "file": "poster-h1-1280.webp", "alt": "Branded water bottles", "width": 1280, "height": 720 }
+      ]
+    },
+    {
+      "id": "sample-hat",
+      "name": "PLACEHOLDER — Sample Hat",
+      "category": "Hats",
+      "categorySlug": "hats",
+      "shopLabel": "Shop Hats",
+      "priceLabel": "PLACEHOLDER",
+      "description": "Adjustable caps for outdoor play, summer programs and sunny-day outings.",
+      "images": [
+        { "set": "c1", "alt": "Branded adjustable caps" },
+        { "file": "poster-h2.webp", "alt": "Branded caps", "width": 1280, "height": 720 }
+      ]
+    }
+  ]
+}
