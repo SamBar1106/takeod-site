@@ -9,6 +9,7 @@ import { Layout } from "./components/Layout.jsx";
 import { ScrollProgress } from "./components/ScrollProgress.jsx";
 import { SmoothScroll, useLenis } from "./components/SmoothScroll.jsx";
 import { About } from "./pages/About.jsx";
+import { Cart } from "./pages/Cart.jsx";
 import { Checkout } from "./pages/Checkout.jsx";
 import { Contact } from "./pages/Contact.jsx";
 import { Home } from "./pages/Home.jsx";
@@ -16,6 +17,7 @@ import { InfoPage } from "./pages/InfoPage.jsx";
 import { Missing } from "./pages/Missing.jsx";
 import { Product } from "./pages/Product.jsx";
 import { Shop } from "./pages/Shop.jsx";
+import { ThankYou } from "./pages/ThankYou.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -140,7 +142,9 @@ function TransitionShell() {
           <Route path="privacy" element={<InfoPage page="privacy" />} />
           <Route path="terms" element={<InfoPage page="terms" />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="thank-you" element={<ThankYou />} />
           <Route path="*" element={<Missing />} />
         </Route>
       </Routes>

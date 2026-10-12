@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { isDemoMode } from "../lib/wix.js";
+import { CartDrawer } from "./CartDrawer.jsx";
 import { Footer } from "./Footer.jsx";
 import { HashScroll } from "./HashScroll.jsx";
 import { Header } from "./Header.jsx";
@@ -22,11 +24,19 @@ export function Layout() {
       <a className="skip" href="#main">
         Skip to content
       </a>
-      <Header />
+      <div className="site-top">
+        {isDemoMode() ? (
+          <p className="demo-banner" role="status">
+            Demo mode
+          </p>
+        ) : null}
+        <Header />
+      </div>
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>
       <Footer />
+      <CartDrawer />
       <HashScroll />
     </>
   );

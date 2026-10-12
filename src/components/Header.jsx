@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { MEDIA } from "../config.js";
 import { prefersReducedMotion } from "../lib/motion.js";
+import { useCart } from "../context/CartContext.jsx";
 import { AppLink } from "./AppLink.jsx";
 
 gsap.registerPlugin(Flip);
@@ -24,6 +25,7 @@ export function Header() {
   const bootRef = useRef(true);
   const [open, setOpen] = useState(false);
   const [shrunk, setShrunk] = useState(false);
+  const { count, openDrawer } = useCart();
 
   useEffect(() => {
     setOpen(false);
@@ -87,19 +89,25 @@ export function Header() {
             </AppLink>
           ))}
         </nav>
-        <AppLink className="btn btn--gold header-cta" to="/contact">
-          Request a Quote
-          <span className="btn__sweep" aria-hidden="true" />
-        </AppLink>
-        <button
-          className="nav-toggle"
-          type="button"
-          aria-expanded={open}
-          aria-controls="site-nav"
-          onClick={() => setOpen((value) => !value)}
-        >
-          {open ? "Close" : "Menu"}
-        </button>
+        <div className="header-tools">
+          <button className="cart-toggle" type="button" onClick={openDrawer} aria-label={`Cart, ${count} items`}>
+            Cart
+            <span className="cart-toggle__count">{count}</span>
+          </button>
+          <AppLink className="btn btn--gold header-cta" to="/contact">
+            Request a Quote
+            <span className="btn__sweep" aria-hidden="true" />
+          </AppLink>
+          <button
+            className="nav-toggle"
+            type="button"
+            aria-expanded={open}
+            aria-controls="site-nav"
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
     </header>
   );

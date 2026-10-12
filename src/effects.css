@@ -18,8 +18,12 @@ main:focus {
 button.btn,
 .filter-bar button,
 .nav-toggle,
+.cart-toggle,
 .accordion button,
-.gallery__thumbs button {
+.gallery__thumbs button,
+.product-option__choices button,
+.cart-line button,
+.cart-drawer__bar button {
   appearance: none;
   -webkit-appearance: none;
 }
@@ -119,7 +123,7 @@ html.has-cursor .cursor-dot {
     justify-self: start;
   }
 
-  .site-header.is-shrunk .header-cta {
+  .site-header.is-shrunk .header-tools {
     grid-column: 3;
     grid-row: 1;
     justify-self: end;
@@ -577,6 +581,214 @@ main h1,
   font-weight: 800;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid var(--navy);
+}
+
+.demo-banner {
+  margin: 0;
+  padding: 0.45rem 1rem;
+  background: #00276c;
+  color: #ebdfc2;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.cart-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.7rem;
+  border: 2px solid var(--navy);
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--font-display);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cart-toggle__count {
+  min-width: 1.4rem;
+  padding: 0.1rem 0.35rem;
+  background: var(--gold);
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.product-option {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.product-option legend,
+.product-stock,
+.cart-line__name,
+.cart-line__price,
+.cart-subtotal,
+.cart-note {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.product-stock {
+  color: var(--royal);
+}
+
+.product-option__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+}
+
+.product-option__choices button {
+  min-height: 44px;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid var(--navy);
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--font-display);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.product-option__choices button[aria-pressed="true"] {
+  background: var(--navy);
+  color: var(--cream);
+}
+
+.product-option__choices button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cart-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+}
+
+.cart-drawer__shade {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 39, 108, 0.45);
+  cursor: pointer;
+}
+
+.cart-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+  background: var(--cream);
+  color: var(--navy);
+  overflow: auto;
+  border-left: 3px solid var(--navy);
+}
+
+.cart-drawer__bar,
+.cart-subtotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cart-drawer__bar h2,
+.cart-page h1 {
+  margin: 0;
+}
+
+.cart-drawer__bar button,
+.cart-line__remove,
+.cart-line__qty button {
+  min-height: 44px;
+  min-width: 44px;
+  border: 2px solid var(--navy);
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--font-display);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cart-drawer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.cart-lines {
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.cart-line {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--navy);
+}
+
+.cart-line img,
+.cart-line__media {
+  width: 88px;
+  height: 64px;
+  object-fit: cover;
+  background: var(--navy);
+}
+
+.cart-line__name,
+.cart-line__options,
+.cart-line__price {
+  margin: 0;
+}
+
+.cart-line__options,
+.cart-note {
+  margin-top: 0.35rem;
+}
+
+.cart-line__qty {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.cart-line__qty input {
+  width: 4rem;
+  min-height: 44px;
+  border: 2px solid var(--navy);
+  background: var(--cream);
+  color: var(--navy);
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-align: center;
+}
+
+.cart-subtotal {
+  margin: 1rem 0;
+}
+
+.quick-view__stock {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--royal);
 }
 
 .story__track {

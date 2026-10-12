@@ -16,7 +16,10 @@ export function Checkout() {
           {items.length ? (
             <ul className="checkout-list">
               {items.map((item) => (
-                <li key={item.id}>{item.name}</li>
+                <li key={item.id}>
+                  {item.name}
+                  {item.quantity > 1 ? ` × ${item.quantity}` : ""}
+                </li>
               ))}
             </ul>
           ) : null}

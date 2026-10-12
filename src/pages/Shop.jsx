@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
-import { getApiBaseUrl, getLocalProducts, getProducts } from "../lib/catalog.js";
+import { getLocalProducts, getProducts, isDemoMode } from "../lib/catalog.js";
 import { prefersReducedMotion } from "../lib/motion.js";
 import { AppLink } from "../components/AppLink.jsx";
 import { MediaPicture } from "../components/MediaPicture.jsx";
@@ -24,8 +24,8 @@ function normalizeSlug(slug) {
 
 export function Shop() {
   const { slug } = useParams();
-  const [products, setProducts] = useState(() => (getApiBaseUrl() ? [] : getLocalProducts()));
-  const [status, setStatus] = useState(getApiBaseUrl() ? "loading" : "ready");
+  const [products, setProducts] = useState(() => (isDemoMode() ? getLocalProducts() : []));
+  const [status, setStatus] = useState(isDemoMode() ? "ready" : "loading");
   const [filter, setFilter] = useState(() => normalizeSlug(slug));
   const gridRef = useRef(null);
   const flipRef = useRef(null);
@@ -40,7 +40,7 @@ export function Shop() {
   }, [slug]);
 
   useLayoutEffect(() => {
-    if (!getApiBaseUrl()) return undefined;
+    if (isDemoMode()) return undefined;
     let live = true;
     getProducts()
       .then((items) => {
@@ -111,7 +111,7 @@ export function Shop() {
       <div className="section__stage">
         <div className="wrap">
           <h1>Shop Products</h1>
-          {status === "error" ? <p className="placeholder-label">PLACEHOLDER</p> : null}
+          {status === "error" ? <p className="placeholder-label">The catalog could not be loaded.</p> : null}
           <div className="filter-bar" role="group" aria-label="Shop Products">
             {FILTERS.map((item) => (
               <button key={item.slug} type="button" aria-pressed={filter === item.slug} onClick={() => choose(item.slug)}>
@@ -142,6 +142,7 @@ export function Shop() {
                   <div className="quick-view">
                     <p className="quick-view__name">{product.name}</p>
                     <p className="quick-view__price">{product.priceLabel}</p>
+                    {product.stockLabel ? <p className="quick-view__stock">{product.stockLabel}</p> : null}
                     <AppLink className="btn btn--gold" to={`/shop/${product.id}`}>
                       {product.shopLabel}
                       <span className="btn__sweep" aria-hidden="true" />

@@ -17,6 +17,7 @@ const routes = [
   ["terms", "/terms"],
   ["contact", "/contact"],
   ["checkout", "/checkout"],
+  ["thank-you", "/thank-you"],
 ];
 
 const errors = [];
@@ -28,6 +29,8 @@ async function prepare(page, route) {
   await page.evaluate(() => document.fonts.ready);
   await page.waitForSelector("h1, .hero__title", { timeout: 15000 });
   await page.waitForTimeout(1200);
+  const banner = (await page.locator(".demo-banner").innerText()).trim();
+  if (banner !== "Demo mode") failed.push(`demo banner was "${banner}" on ${route}`);
   const text = (await page.locator("main").innerText()).trim();
   if (text.length < 8) failed.push(`empty main for ${route}`);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -47,6 +50,27 @@ async function shoot(browserType, label, contextOptions) {
       fullPage: true,
     });
   }
+  await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load", timeout: 60000 });
+  await page.getByRole("button", { name: "Add to Cart" }).click();
+  await page.waitForSelector(".cart-drawer", { timeout: 5000 });
+  const drawerText = await page.locator(".cart-drawer").innerText();
+  if (!drawerText.includes("Sample Mug") || !drawerText.includes("Subtotal")) {
+    errors.push(`${label} cart drawer missing item or subtotal`);
+  }
+  await page.screenshot({ path: path.join(outDir, `cart-drawer-${label}.png`) });
+  await page.goto(`${base}/cart`, { waitUntil: "load", timeout: 60000 });
+  await page.waitForSelector(".cart-line", { timeout: 5000 });
+  const cartFailed = [];
+  const cartBanner = (await page.locator(".demo-banner").innerText()).trim();
+  if (cartBanner !== "Demo mode") cartFailed.push(`demo banner was "${cartBanner}"`);
+  const cartText = await page.locator("main").innerText();
+  if (!cartText.includes("Sample Mug") || !cartText.includes("PLACEHOLDER") || !cartText.includes("Subtotal")) {
+    cartFailed.push("cart page missing item, placeholder subtotal, or subtotal");
+  }
+  const cartOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  if (cartOverflow > 2) cartFailed.push(`horizontal overflow ${cartOverflow}px`);
+  if (cartFailed.length) errors.push(`${label} cart: ${cartFailed.join("; ")}`);
+  await page.screenshot({ path: path.join(outDir, `cart-${label}.png`), fullPage: true });
   await browser.close();
 }
 
@@ -73,9 +97,12 @@ const hats = await page.locator(".product-card").evaluateAll((cards) =>
 );
 if (!hats.some((text) => text.includes("Sample Hat"))) errors.push("filter did not show the sample hat");
 await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load" });
-await page.getByRole("button", { name: "Start an Order" }).click();
+await page.getByRole("button", { name: "Add to Cart" }).click();
+await page.waitForSelector(".cart-drawer");
+await page.goto(`${base}/cart`, { waitUntil: "load" });
+await page.getByRole("button", { name: "Checkout" }).click();
 await page.waitForFunction(() => document.querySelector("h1")?.textContent?.includes("PLACEHOLDER — Checkout"), null, {
-  timeout: 5000,
+  timeout: 8000,
 });
 const checkout = await page.locator("h1").innerText();
 if (!checkout.includes("PLACEHOLDER — Checkout")) errors.push(`checkout heading was ${checkout}`);
