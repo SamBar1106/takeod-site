@@ -44,7 +44,7 @@ function TransitionShell() {
     if (!panel) return undefined;
     if (seen.current === null) {
       seen.current = routeKey;
-      gsap.set(panel, { xPercent: 100 });
+      gsap.set(panel, { x: 0, xPercent: 100 });
       return undefined;
     }
     if (seen.current === routeKey) return undefined;
@@ -65,7 +65,7 @@ function TransitionShell() {
     covered.current = false;
     panel.style.pointerEvents = "auto";
     const tl = gsap.timeline();
-    tl.set(panel, { xPercent: 100 }).to(panel, { xPercent: 0, duration: 0.42, ease: "power3.inOut" }).add(() => {
+    tl.set(panel, { x: 0, xPercent: 100 }).to(panel, { x: 0, xPercent: 0, duration: 0.42, ease: "power3.inOut" }).add(() => {
       if (gen.current !== current) return;
       covered.current = true;
       setDisplay(location);
@@ -94,19 +94,20 @@ function TransitionShell() {
     }
     if (!panel || prefersReducedMotion()) {
       if (panel) {
-        gsap.set(panel, { xPercent: 100 });
+        gsap.set(panel, { x: 0, xPercent: 100 });
         panel.style.pointerEvents = "none";
       }
       covered.current = false;
       return undefined;
     }
     const tween = gsap.to(panel, {
+      x: 0,
       xPercent: -100,
       duration: 0.48,
       ease: "power3.inOut",
       onComplete: () => {
         if (gen.current !== current) return;
-        gsap.set(panel, { xPercent: 100 });
+        gsap.set(panel, { x: 0, xPercent: 100 });
         panel.style.pointerEvents = "none";
         covered.current = false;
         ScrollTrigger.refresh();
@@ -114,7 +115,8 @@ function TransitionShell() {
       },
     });
     const fail = window.setTimeout(() => {
-      gsap.set(panel, { xPercent: 100 });
+      if (gen.current !== current) return;
+      gsap.set(panel, { x: 0, xPercent: 100 });
       panel.style.pointerEvents = "none";
       covered.current = false;
     }, 1100);

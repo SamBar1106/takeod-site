@@ -74,7 +74,9 @@ const hats = await page.locator(".product-card").evaluateAll((cards) =>
 if (!hats.some((text) => text.includes("Sample Hat"))) errors.push("filter did not show the sample hat");
 await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load" });
 await page.getByRole("button", { name: "Start an Order" }).click();
-await page.waitForSelector("h1");
+await page.waitForFunction(() => document.querySelector("h1")?.textContent?.includes("PLACEHOLDER — Checkout"), null, {
+  timeout: 5000,
+});
 const checkout = await page.locator("h1").innerText();
 if (!checkout.includes("PLACEHOLDER — Checkout")) errors.push(`checkout heading was ${checkout}`);
 const muted = await page.goto(`${base}/`, { waitUntil: "load" }).then(async () =>

@@ -644,7 +644,10 @@ main h1,
   flex: 0 0 auto;
 }
 
-.line,
+.line {
+  display: block;
+}
+
 .char {
   display: inline-block;
 }

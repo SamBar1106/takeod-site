@@ -167,6 +167,24 @@ export function useHeroReel(rootRef) {
       }
     };
 
+    const playWhenReady = async (video) => {
+      armInline(video);
+      const attempt = async () => {
+        try {
+          await video.play();
+          return true;
+        } catch (error) {
+          if (error?.name === "AbortError") return video.paused ? false : true;
+          return false;
+        }
+      };
+      if (await attempt()) return true;
+      if (cancelled) return false;
+      if (video.readyState < 3) await waitFor(video, "canplay");
+      if (cancelled) return false;
+      return attempt();
+    };
+
     const start = async () => {
       if (cancelled) return;
       if (started) {
@@ -179,15 +197,14 @@ export function useHeroReel(rootRef) {
       if (!first.getAttribute("src")) arm(first, 0);
       else first.dataset.clip = first.dataset.clip || "0";
       pauseOthers(first);
-      try {
-        await first.play();
-        if (!cancelled) hidePoster();
-      } catch {
+      const playing = await playWhenReady(first);
+      if (cancelled) return;
+      if (!playing) {
         started = false;
         showPlay();
         return;
       }
-      if (cancelled) return;
+      hidePoster();
       arm(hiddenVideo(), 1);
       if (!rafId) tick();
       const time = activeVideo().currentTime;
