@@ -432,7 +432,7 @@ html.needs-play .hero__play {
   aspect-ratio: 1433 / 942;
 }
 
-.product-view {
+.spline-slot {
   position: relative;
   min-height: 210px;
   background: var(--cream);
@@ -440,44 +440,37 @@ html.needs-play .hero__play {
   overflow: hidden;
 }
 
-.product-view[data-products="bottle cap backpack"] {
-  min-height: 760px;
-}
-
-.product-view__poster {
-  width: 100%;
+.spline-slot__stage {
   height: 100%;
   min-height: inherit;
+  transform-style: preserve-3d;
+}
+
+.spline-slot__img {
+  width: 100%;
+  height: 100%;
+  min-height: 210px;
   object-fit: cover;
   object-position: center;
-  display: block;
 }
 
-.product-view.is-live .product-view__poster {
-  visibility: hidden;
+.spline-slot__label {
+  position: absolute;
+  z-index: 2;
+  top: 0.55rem;
+  left: 0.55rem;
+  margin: 0;
+  background: var(--gold);
+  color: var(--navy);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  padding: 0.28rem 0.45rem;
 }
 
-.logo-intro {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-}
-
-.logo-intro img {
-  width: min(68vw, 300px);
-  height: auto;
-  transform-origin: center center;
-}
-
-html.js:not(.reduce-motion) .brand__img,
-html.js:not(.reduce-motion) .hero__mark img {
-  opacity: 0;
-}
-
-html.reduce-motion .logo-intro {
+.spline-slot.is-live .spline-slot__label,
+.spline-slot.is-live .spline-slot__img {
   display: none;
 }
 
@@ -499,12 +492,8 @@ html.reduce-motion .logo-intro {
 }
 
 html.reduce-motion .pop,
-html.reduce-motion .brand__img,
-html.reduce-motion .hero__mark img,
 html.show-text .pop,
-html.js.show-text .section__stage,
-html.js.show-text .brand__img,
-html.js.show-text .hero__mark img {
+html.js.show-text .section__stage {
   opacity: 1;
 }
 
@@ -717,9 +706,8 @@ html.motion-pin .step {
   font-weight: 600;
 }
 
-.why .product-view {
+.why .spline-slot {
   margin-top: 1.5rem;
-  min-height: 420px;
 }
 
 .about {
@@ -872,7 +860,7 @@ html.motion-pin .step {
 
   .hero__layout {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.15fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.8fr);
     gap: 1.5rem;
     align-items: end;
   }
@@ -881,8 +869,9 @@ html.motion-pin .step {
     font-size: clamp(2.7rem, 4.6vw, 4.7rem);
   }
 
-  .hero .product-view[data-products="bottle cap backpack"] {
-    min-height: 720px;
+  .hero .spline-slot,
+  .hero .spline-slot__img {
+    min-height: 320px;
   }
 
   .cards {
@@ -896,9 +885,13 @@ html.motion-pin .step {
     align-items: center;
   }
 
-  .why .product-view {
+  .why .spline-slot {
     margin-top: 0;
-    min-height: 460px;
+    min-height: 420px;
+  }
+
+  .why .spline-slot__img {
+    min-height: 420px;
   }
 
   .about__grid {
@@ -930,10 +923,6 @@ html.motion-pin .step {
 
   .card:nth-child(5) {
     grid-column: 4 / span 2;
-  }
-
-  .hero .product-view[data-products="bottle cap backpack"] {
-    min-height: 480px;
   }
 }
 

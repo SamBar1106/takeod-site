@@ -1,10 +1,11 @@
 import "./styles.css";
+import { SPLINE_SCENE_URL } from "./config.js";
 import { setupEmbed } from "./embed.js";
 import { setupNav } from "./nav.js";
 import { setupMotion } from "./motion.js";
 import { setupHero } from "./hero.js";
 import { setupLifestyle } from "./lifestyle.js";
-import { setupProducts } from "./products.js";
+import { setupSpline } from "./spline.js";
 
 setupEmbed();
 setupNav();
@@ -19,7 +20,7 @@ motion.then((api) => {
   });
 });
 
-setupProducts();
+setupSpline(SPLINE_SCENE_URL);
 
 window.setTimeout(() => {
   document.querySelectorAll(".pop").forEach((el) => {

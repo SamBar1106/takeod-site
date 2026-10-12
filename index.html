@@ -23,11 +23,6 @@
       html { background: #00276c; }
       body { margin: 0; background: #ebdfc2; color: #00276c; }
       html.js:not(.reduce-motion) .section__stage { opacity: 0; }
-      html.js:not(.reduce-motion) .brand__img,
-      html.js:not(.reduce-motion) .hero__mark img { opacity: 0; }
-      .logo-intro { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; pointer-events: none; }
-      html.reduce-motion .logo-intro { display: none; }
-      html.js:not(.reduce-motion) .logo-intro img { width: min(68vw, 300px); height: auto; opacity: 0; }
     </style>
     <script>
       (function () {
@@ -82,9 +77,6 @@
           <div class="hero__overlay"></div>
           <div class="hero__shade"></div>
         </div>
-        <div class="logo-intro" aria-hidden="true">
-          <img src="%BASE_URL%media/logo.webp" alt="" width="720" height="473" />
-        </div>
         <a class="hero__mark" href="#main">
           <img src="%BASE_URL%media/logo.webp" alt="Daykodee" width="720" height="473" />
         </a>
@@ -99,16 +91,19 @@
               </div>
               <button class="hero__play btn btn--primary" type="button">Play hero video<span class="btn__sweep" aria-hidden="true"></span></button>
             </div>
-            <div class="product-view" data-products="bottle cap backpack" aria-label="Branded water bottle, cap, and backpack">
-              <img
-                class="product-view__poster"
-                src="%BASE_URL%media/float-hero.webp"
-                alt="Branded water bottle, cap, and backpack"
-                width="640"
-                height="360"
-                decoding="async"
-                fetchpriority="low"
-              />
+            <div class="spline-slot" data-spline-slot="hero" data-spline-url="">
+              <p class="spline-slot__label">Spline 3D slot</p>
+              <div class="spline-slot__stage">
+                <img
+                  class="spline-slot__img"
+                  src="%BASE_URL%media/float-hero.webp"
+                  alt="Branded mugs and water bottles"
+                  width="640"
+                  height="360"
+                  decoding="async"
+                  fetchpriority="low"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -281,16 +276,19 @@
               </li>
             </ul>
           </div>
-          <div class="product-view" data-products="backpack" aria-label="Branded backpack">
-            <img
-              class="product-view__poster"
-              src="%BASE_URL%media/float-why.webp"
-              alt="Branded backpack"
-              width="640"
-              height="360"
-              loading="lazy"
-              decoding="async"
-            />
+          <div class="spline-slot" data-spline-slot="why" data-spline-url="">
+            <p class="spline-slot__label">Spline 3D slot</p>
+            <div class="spline-slot__stage">
+              <img
+                class="spline-slot__img"
+                src="%BASE_URL%media/float-why.webp"
+                alt="Branded tote bags"
+                width="640"
+                height="360"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
         </div>

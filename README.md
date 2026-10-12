@@ -1,6 +1,6 @@
 # takeod-site
 
-Project scaffold for the TakeOD (Daykodee) website rebuild. Started from commit 16d5de6 of `SamBar1106/daykodee-home` (the first pre-Wix version).
+Project scaffold for the TakeOD (Daykodee) website rebuild. Started from commit 4099e10 of `SamBar1106/daykodee-home`.
 
 ## Plan
 - Front-end swap: the Daykodee/TakeOD Wix site gets rebuilt in React, keeping Web Dev's existing designs, animations and layout.
