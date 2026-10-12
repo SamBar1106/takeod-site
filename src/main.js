@@ -5,12 +5,10 @@ import { setupMotion } from "./motion.js";
 import { setupHero } from "./hero.js";
 import { setupLifestyle } from "./lifestyle.js";
 import { setupProducts } from "./products.js";
-import { setupCategoryVideos } from "./categories.js";
 
 setupEmbed();
 setupNav();
 setupLifestyle();
-setupCategoryVideos();
 
 const motion = setupMotion();
 motion.then((api) => {
@@ -24,5 +22,10 @@ motion.then((api) => {
 setupProducts();
 
 window.setTimeout(() => {
-  document.documentElement.classList.add("show-text");
-}, 1500);
+  document.querySelectorAll(".pop").forEach((el) => {
+    if (el.dataset.split !== "1") el.style.opacity = "1";
+  });
+  document.querySelectorAll(".brand__img, .hero__mark img").forEach((img) => {
+    if (Number(getComputedStyle(img).opacity) === 0) img.style.opacity = "1";
+  });
+}, 5000);

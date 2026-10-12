@@ -67,7 +67,7 @@ export function setupHero({ onCut, introDone, beatsReady }) {
   }
 
   function pauseOthers(current) {
-    document.querySelectorAll(".hero__video").forEach((video) => {
+    document.querySelectorAll("video").forEach((video) => {
       if (video !== current && !video.paused) video.pause();
     });
   }
@@ -127,12 +127,12 @@ export function setupHero({ onCut, introDone, beatsReady }) {
 
   function crossfade(incoming, outgoing) {
     if (reduceMotion()) {
-      incoming.classList.add("is-painted", "is-active");
+      incoming.classList.add("is-active");
       outgoing.classList.remove("is-active");
       outgoing.pause();
       return Promise.resolve();
     }
-    incoming.classList.add("is-painted", "is-incoming");
+    incoming.classList.add("is-incoming");
     return new Promise((resolve) => {
       let settled = false;
       const finish = () => {
@@ -194,24 +194,7 @@ export function setupHero({ onCut, introDone, beatsReady }) {
     pauseOthers(first);
     try {
       await first.play();
-      const painted = await new Promise((resolve) => {
-        let settled = false;
-        const finish = (ok) => {
-          if (settled) return;
-          settled = true;
-          resolve(ok);
-        };
-        if (typeof first.requestVideoFrameCallback === "function") {
-          first.requestVideoFrameCallback(() => finish(true));
-        } else {
-          first.addEventListener("timeupdate", () => finish(first.currentTime > 0), { once: true });
-        }
-        window.setTimeout(() => finish(false), 4000);
-      });
-      if (painted) {
-        first.classList.add("is-painted");
-        hidePoster();
-      }
+      hidePoster();
     } catch {
       started = false;
       showPlay();

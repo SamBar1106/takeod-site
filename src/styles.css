@@ -68,7 +68,7 @@
 html {
   color-scheme: only light;
   scroll-behavior: auto;
-  background: var(--cream);
+  background: var(--navy);
 }
 
 body {
@@ -241,7 +241,6 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   min-height: 48px;
   padding: 0.75rem 1.15rem;
   border: 2px solid transparent;
@@ -269,20 +268,21 @@ a {
 
 .btn__sweep {
   position: absolute;
-  top: -20%;
-  bottom: -20%;
-  left: 0;
-  width: 42%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(212, 160, 23, 0.05) 30%,
-    rgba(255, 244, 214, 0.92) 50%,
-    rgba(212, 160, 23, 0.45) 68%,
-    transparent 100%
-  );
-  transform: translateX(-180%) skewX(-16deg);
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.35rem;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
   pointer-events: none;
+}
+
+.btn--primary .btn__sweep {
+  background: var(--gold);
+}
+
+.btn--gold .btn__sweep {
+  background: var(--navy);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -323,20 +323,14 @@ a {
 
 .hero__video {
   opacity: 0;
-  visibility: hidden;
   z-index: 0;
 }
 
-.hero__video.is-active.is-painted,
-.hero__video.is-incoming.is-painted {
-  visibility: visible;
-}
-
-.hero__video.is-active.is-painted {
+.hero__video.is-active {
   opacity: 1;
 }
 
-.hero__video.is-incoming.is-painted {
+.hero__video.is-incoming {
   z-index: 1;
   animation: hero-crossfade 200ms linear forwards;
 }
@@ -438,45 +432,28 @@ html.needs-play .hero__play {
   aspect-ratio: 1433 / 942;
 }
 
-.showcase .section__stage {
-  background: var(--cream);
-  padding: clamp(1.25rem, 3.5vw, 2.5rem) 0;
-}
-
 .product-view {
   position: relative;
-  width: min(1120px, calc(100% - 1.5rem));
-  margin-inline: auto;
-  aspect-ratio: 2.7 / 1;
+  min-height: 210px;
   background: var(--cream);
+  border: 3px solid var(--navy);
   overflow: hidden;
 }
 
-.product-fallback {
-  position: relative;
-  z-index: 1;
-  display: block;
+.product-view[data-products="bottle cap backpack"] {
+  min-height: 760px;
+}
+
+.product-view__poster {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  background: var(--cream);
-}
-
-.product-view canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  min-height: inherit;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  pointer-events: none;
-  visibility: hidden;
 }
 
-.product-view.is-live canvas {
-  visibility: visible;
-}
-
-.product-view.is-live .product-fallback {
+.product-view.is-live .product-view__poster {
   visibility: hidden;
 }
 
@@ -517,41 +494,22 @@ html.reduce-motion .logo-intro {
   white-space: nowrap;
 }
 
+.js .pop {
+  opacity: 0;
+}
+
 html.reduce-motion .pop,
 html.reduce-motion .brand__img,
 html.reduce-motion .hero__mark img,
 html.show-text .pop,
-html.show-text .section__stage,
-html.show-text .card,
-html.show-text .why__item,
-html.show-text .char,
-html.show-text .word,
-html.show-text .step,
-html.show-text .step__num,
-html.show-text .step h3,
-html.show-text .step p,
-html.show-text .brand__img,
-html.show-text .hero__mark img,
-html.show-text #ready .btn,
-html.is-embed.is-ios .pop,
-html.is-embed.is-ios .section__stage,
-html.is-embed.is-ios .card,
-html.is-embed.is-ios .why__item,
-html.is-embed.is-ios .char,
-html.is-embed.is-ios .word,
-html.is-embed.is-ios .brand__img,
-html.is-embed.is-ios .hero__mark img {
-  opacity: 1 !important;
-  visibility: visible !important;
+html.js.show-text .section__stage,
+html.js.show-text .brand__img,
+html.js.show-text .hero__mark img {
+  opacity: 1;
 }
 
-html.show-text .char,
-html.show-text .word,
-html.show-text .section__stage,
-html.is-embed.is-ios .char,
-html.is-embed.is-ios .word,
-html.is-embed.is-ios .section__stage {
-  transform: none !important;
+html.js.show-text .section__stage {
+  transform: none;
 }
 
 .section {
@@ -598,8 +556,6 @@ h2 {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  border-radius: 1.15rem;
-  overflow: hidden;
 }
 
 .card:nth-child(even) {
@@ -610,45 +566,20 @@ h2 {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background-color: var(--navy);
-  background-image: var(--poster);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-radius: 1.15rem 1.15rem 0 0;
+  background: var(--navy);
 }
 
-.card:nth-child(even) .card__media {
-  background-color: var(--royal);
-}
-
-.card__media img,
-.card__media video {
+.card__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
   transform-origin: center;
-  display: block;
-  background-image: var(--poster);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.card__media video {
-  visibility: hidden;
-}
-
-.card__media video.is-playing {
-  visibility: visible;
 }
 
 .card__border {
   position: absolute;
   inset: 0;
   border: 3px solid var(--gold);
-  border-radius: inherit;
   transform: scaleX(0);
   transform-origin: left center;
   pointer-events: none;
@@ -786,6 +717,11 @@ html.motion-pin .step {
   font-weight: 600;
 }
 
+.why .product-view {
+  margin-top: 1.5rem;
+  min-height: 420px;
+}
+
 .about {
   color: var(--cream);
 }
@@ -815,14 +751,6 @@ html.motion-pin .step {
   height: 100%;
   object-fit: cover;
   object-position: center center;
-}
-
-.about__video {
-  visibility: hidden;
-}
-
-.about__video.is-painted {
-  visibility: visible;
 }
 
 .about__poster {
@@ -942,12 +870,35 @@ html.motion-pin .step {
     background: linear-gradient(90deg, rgba(0, 39, 108, 0.9) 0%, rgba(0, 39, 108, 0.62) 42%, rgba(0, 39, 108, 0.28) 100%);
   }
 
+  .hero__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.15fr);
+    gap: 1.5rem;
+    align-items: end;
+  }
+
   .hero__title {
     font-size: clamp(2.7rem, 4.6vw, 4.7rem);
   }
 
+  .hero .product-view[data-products="bottle cap backpack"] {
+    min-height: 720px;
+  }
+
   .cards {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .why__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .why .product-view {
+    margin-top: 0;
+    min-height: 460px;
   }
 
   .about__grid {
@@ -980,6 +931,10 @@ html.motion-pin .step {
   .card:nth-child(5) {
     grid-column: 4 / span 2;
   }
+
+  .hero .product-view[data-products="bottle cap backpack"] {
+    min-height: 480px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -1009,39 +964,15 @@ html.is-embed .site-header {
   display: none;
 }
 
-html.is-embed,
-html.is-embed body {
-  height: auto;
-  min-height: 0;
+html.is-embed .hero {
+  min-height: 100svh;
 }
 
-html.is-embed .logo-intro {
-  position: absolute;
-}
-
-html.is-embed .hero,
 html.is-embed .hero__content {
-  height: 640px;
-  min-height: 0;
-  max-height: 640px;
+  min-height: 100svh;
+  padding-top: 4.5rem;
 }
 
-html.is-embed #ready {
-  display: flex;
-  flex-direction: column;
-}
-
-html.is-embed #ready > .section__stage {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-@media (min-width: 768px) {
-  html.is-embed .hero,
-  html.is-embed .hero__content {
-    height: 720px;
-    max-height: 720px;
-  }
+html.is-embed .hero__mark {
+  display: block;
 }

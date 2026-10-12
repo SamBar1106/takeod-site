@@ -93,7 +93,7 @@ function prepareTemplate(THREE, DecalGeometry, gltf, texture, spec) {
   const mesh = model.getObjectByProperty("isMesh", true);
   const wrapper = new THREE.Group();
   wrapper.add(model);
-  if (mesh && texture) {
+  if (mesh) {
     const decal = buildDecal(THREE, DecalGeometry, mesh, texture, spec);
     if (decal) wrapper.add(decal);
   }
@@ -108,91 +108,33 @@ function normalize(THREE, wrapper) {
   const box = new THREE.Box3().setFromObject(wrapper);
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
-  const fit = 1.15 / Math.max(size.x, size.y, 0.001);
+  const fit = 1.2 / Math.max(size.x, size.y, size.z);
   wrapper.scale.setScalar(fit);
   wrapper.position.set(-center.x * fit, -center.y * fit, -center.z * fit);
   return wrapper;
 }
 
-function frameCamera(camera, contentWidth, contentHeight, nearZ, lookY, aspect) {
-  const fov = 26;
+function frameCamera(camera, count, stacked, aspect) {
+  const span = Math.max(count - 1, 0) * 1.55;
+  const width = stacked ? 1.4 : span + 1.4;
+  const height = stacked ? span + 1.45 : 1.5;
+  const fov = 28;
   const halfFov = (fov * Math.PI) / 180 / 2;
-  const hFov = Math.atan(Math.tan(halfFov) * Math.max(aspect, 0.2));
-  const distY = contentHeight * 0.5 / Math.tan(halfFov) + nearZ;
-  const distX = contentWidth * 0.5 / Math.tan(hFov) + nearZ;
+  const distY = height * 0.5 / Math.tan(halfFov);
+  const distX = width * 0.5 / (Math.tan(halfFov) * Math.max(aspect, 0.2));
   const dist = Math.max(distY, distX) * 1.08;
   camera.fov = fov;
   camera.aspect = aspect;
-  camera.position.set(0, lookY, dist);
+  camera.position.set(0, 0, dist);
   camera.near = Math.max(0.01, dist / 80);
   camera.far = dist * 12;
-  camera.lookAt(0, lookY, 0);
+  camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
-}
-
-/** One horizontal row. Spacing uses the real bounds of the widest pose. */
-function layoutRow(THREE, products) {
-  const yaws = [-0.64, 0, 0.64];
-  const pitches = [-0.22, 0, 0.22];
-  const gap = 0.42;
-  const measured = products.map((spin) => {
-    spin.rotation.set(0, 0, 0);
-    spin.position.set(0, 0, 0);
-    spin.updateWorldMatrix(true, true);
-    const rest = new THREE.Box3().setFromObject(spin);
-    const restSize = rest.getSize(new THREE.Vector3());
-    let halfW = restSize.x / 2;
-    let maxY = rest.max.y;
-    let minY = rest.min.y;
-    let nearZ = rest.max.z;
-    for (const yaw of yaws) {
-      for (const pitch of pitches) {
-        spin.rotation.set(pitch, yaw, 0);
-        spin.updateWorldMatrix(true, true);
-        const box = new THREE.Box3().setFromObject(spin);
-        halfW = Math.max(halfW, Math.abs(box.min.x), Math.abs(box.max.x));
-        maxY = Math.max(maxY, box.max.y);
-        minY = Math.min(minY, box.min.y);
-        nearZ = Math.max(nearZ, box.max.z);
-      }
-    }
-    spin.rotation.set(0, 0, 0);
-    return { spin, hy: restSize.y / 2, halfW, maxY, minY, nearZ };
-  });
-  const totalW = measured.reduce((sum, item) => sum + item.halfW * 2, 0) + gap * Math.max(measured.length - 1, 0);
-  let cursor = -totalW / 2;
-  const maxHy = Math.max(...measured.map((item) => item.hy));
-  let spanTop = -Infinity;
-  let spanBottom = Infinity;
-  let nearZ = 0;
-  measured.forEach((item) => {
-    const baseY = -maxHy + item.hy;
-    item.spin.userData.baseX = cursor + item.halfW;
-    item.spin.userData.baseY = baseY;
-    cursor += item.halfW * 2 + gap;
-    spanTop = Math.max(spanTop, baseY + item.maxY);
-    spanBottom = Math.min(spanBottom, baseY + item.minY);
-    nearZ = Math.max(nearZ, item.nearZ);
-  });
-  const pad = 0.12;
-  return {
-    contentW: totalW + pad,
-    contentH: spanTop - spanBottom + pad + 0.1,
-    nearZ,
-    lookY: (spanTop + spanBottom) / 2,
-  };
 }
 
 export function setupProducts() {
   const views = [...document.querySelectorAll(".product-view")];
   if (!views.length) return;
-
-  if (document.documentElement.classList.contains("is-embed")) {
-    boot(views, true).catch(() => {
-      /* The static product image stays up if WebGL or a model fails. */
-    });
-    return;
-  }
 
   let started = false;
   const observer = new IntersectionObserver(
@@ -201,8 +143,8 @@ export function setupProducts() {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       started = true;
       observer.disconnect();
-      boot(views, false).catch(() => {
-        /* The static product image stays up if WebGL or a model fails. */
+      boot(views).catch(() => {
+        /* Posters stay in place if WebGL or a model fails. */
       });
     },
     { rootMargin: "240px 0px" },
@@ -210,86 +152,38 @@ export function setupProducts() {
   views.forEach((view) => observer.observe(view));
 }
 
-function isMobile() {
-  return window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
-}
+async function boot(views) {
+  await afterFirstPaint();
+  await whenIdle();
 
-async function boot(views, immediate) {
-  if (!immediate) {
-    await afterFirstPaint();
-    await whenIdle();
-  }
-
-  const mobile = isMobile();
-  const maxRatio = mobile ? 1 : 1.5;
-  let renderer = null;
-  let canvas = null;
-  let blocked = false;
-  const giveUp = () => {
-    blocked = true;
-    views.forEach((view) => view.classList.remove("is-live"));
-    if (canvas) canvas.style.visibility = "hidden";
-    if (renderer) renderer.setAnimationLoop(null);
-  };
-  const timer = window.setTimeout(() => {
-    if (!views.some((view) => view.classList.contains("is-live"))) giveUp();
-  }, 4000);
-
-  const makeRenderer = (THREE, lowPower) => {
-    try {
-      const next = new THREE.WebGLRenderer({
-        antialias: !mobile,
-        alpha: true,
-        powerPreference: lowPower ? "low-power" : "high-performance",
-        failIfMajorPerformanceCaveat: false,
-      });
-      if (next.getContext()) return next;
-      next.dispose();
-    } catch {
-      /* Try the other power preference before giving up. */
-    }
-    return null;
-  };
-
-  try {
   const THREE = await import("three");
-  if (blocked) return;
   const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
   const { MeshoptDecoder } = await import("three/addons/libs/meshopt_decoder.module.js");
   const { DecalGeometry } = await import("three/addons/geometries/DecalGeometry.js");
-  if (blocked) return;
 
   const reduce = window.matchMedia(REDUCE).matches;
-  const fine = window.matchMedia(FINE).matches && !mobile;
+  const fine = window.matchMedia(FINE).matches;
 
-  const host = views[0];
-  renderer = makeRenderer(THREE, mobile) || makeRenderer(THREE, !mobile);
-  if (!renderer) {
-    giveUp();
-    return;
-  }
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxRatio));
-  canvas = renderer.domElement;
-  canvas.setAttribute("aria-hidden", "true");
-  canvas.style.visibility = "hidden";
-  host.appendChild(canvas);
-  canvas.addEventListener("webglcontextlost", (event) => {
-    event.preventDefault();
-    giveUp();
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    powerPreference: "high-performance",
   });
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.autoClear = false;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  const canvas = renderer.domElement;
+  canvas.setAttribute("aria-hidden", "true");
+  canvas.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;";
+  document.body.appendChild(canvas);
 
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
-  const texture = mobile
-    ? null
-    : await new THREE.TextureLoader().loadAsync(modelUrl("logo-decal.png"));
-  if (texture) {
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-    texture.premultiplyAlpha = false;
-  }
+  const texture = await new THREE.TextureLoader().loadAsync(modelUrl("logo-decal.png"));
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  texture.premultiplyAlpha = false;
 
   const needed = new Set(views.flatMap((view) => (view.dataset.products || ORDER.join(" ")).split(/\s+/)));
   const templates = new Map();
@@ -299,11 +193,11 @@ async function boot(views, immediate) {
       templates.set(name, prepareTemplate(THREE, DecalGeometry, gltf, texture, PLACEMENTS[name]));
     }),
   );
-  if (blocked) return;
 
   const scenes = views.map((view) => {
     const names = (view.dataset.products || ORDER.join(" ")).split(/\s+/).filter((name) => templates.has(name));
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#EBDFC2");
     scene.add(new THREE.AmbientLight(0xffffff, 0.92));
     const key = new THREE.DirectionalLight(0xffffff, 1.75);
     key.position.set(1.4, 2.6, 4);
@@ -323,8 +217,7 @@ async function boot(views, immediate) {
       return spin;
     });
 
-    const camera = new THREE.PerspectiveCamera(26, 1, 0.01, 50);
-    const bounds = layoutRow(THREE, products);
+    const camera = new THREE.PerspectiveCamera(28, 1, 0.01, 50);
     const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     if (!reduce && fine) {
       view.addEventListener("pointermove", (event) => {
@@ -338,19 +231,16 @@ async function boot(views, immediate) {
       });
     }
 
-    return { view, scene, root, products, camera, pointer, bounds };
+    return { view, scene, root, products, camera, pointer };
   });
 
   const resize = () => {
-    const rect = host.getBoundingClientRect();
-    const width = Math.max(1, Math.round(rect.width));
-    const height = Math.max(1, Math.round(rect.height));
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxRatio));
-    renderer.setSize(width, height, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
   };
-  resize();
-  const resizeObserver = new ResizeObserver(resize);
-  resizeObserver.observe(host);
+  window.addEventListener("resize", resize);
 
   let running = false;
   const visible = new Set();
@@ -359,7 +249,6 @@ async function boot(views, immediate) {
       if (entry.isIntersecting) visible.add(entry.target);
       else visible.delete(entry.target);
     });
-    if (blocked || !renderer) return;
     if (visible.size && !running) {
       running = true;
       renderer.setAnimationLoop(frame);
@@ -368,38 +257,7 @@ async function boot(views, immediate) {
   views.forEach((view) => watch.observe(view));
 
   const clock = new THREE.Clock();
-  const pixel = new Uint8Array(4);
-  function frameHasProducts() {
-    const gl = renderer.getContext();
-    if (!gl || gl.isContextLost()) return false;
-    const w = gl.drawingBufferWidth;
-    const h = gl.drawingBufferHeight;
-    if (w < 2 || h < 2) return false;
-    const samples = [];
-    for (const [px, py] of [[0.18, 0.5], [0.5, 0.5], [0.82, 0.5], [0.32, 0.38], [0.68, 0.38], [0.5, 0.7]]) {
-      gl.readPixels(
-        Math.min(w - 1, Math.floor(px * w)),
-        Math.min(h - 1, Math.floor(py * h)),
-        1,
-        1,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        pixel,
-      );
-      if (pixel[3] > 12) samples.push([pixel[0], pixel[1], pixel[2]]);
-    }
-    if (samples.length < 2) return false;
-    const span = [0, 1, 2].reduce((sum, channel) => {
-      const values = samples.map((sample) => sample[channel]);
-      return sum + Math.max(...values) - Math.min(...values);
-    }, 0);
-    return span > 18;
-  }
   function frame() {
-    if (blocked) {
-      giveUp();
-      return;
-    }
     if (!visible.size || document.hidden) {
       if (!visible.size) {
         running = false;
@@ -412,48 +270,54 @@ async function boot(views, immediate) {
     }
 
     const elapsed = clock.getElapsedTime();
+    const dpr = renderer.getPixelRatio();
     const height = window.innerHeight;
+
+    renderer.setScissorTest(false);
     renderer.setClearColor(0x000000, 0);
     renderer.clear(true, true, true);
+    renderer.setScissorTest(true);
 
     for (const item of scenes) {
       if (!visible.has(item.view)) continue;
       const rect = item.view.getBoundingClientRect();
-      if (rect.width < 2 || rect.height < 2) continue;
-      if (rect.bottom < 0 || rect.top > height) continue;
+      const border = 3;
+      const left = rect.left + border;
+      const top = rect.top + border;
+      const width = Math.max(1, rect.width - border * 2);
+      const heightPx = Math.max(1, rect.height - border * 2);
+      if (top > height || top + heightPx < 0) continue;
 
+      const stacked = item.products.length > 1 && width < 560;
       if (!reduce) {
         item.pointer.x += (item.pointer.tx - item.pointer.x) * 0.08;
         item.pointer.y += (item.pointer.ty - item.pointer.y) * 0.08;
       }
       const mid = (rect.top + rect.height / 2) / height - 0.5;
-      item.products.forEach((spin) => {
+      item.products.forEach((spin, index) => {
+        const count = item.products.length;
+        const offset = index - (count - 1) / 2;
+        const layoutY = stacked ? ((count - 1) / 2) * 1.55 - index * 1.55 : 0;
+        spin.position.x = stacked ? 0 : offset * 1.55;
         const phase = spin.userData.phase;
-        spin.position.x = spin.userData.baseX;
-        spin.position.z = 0;
         if (reduce) {
           spin.rotation.set(0, 0, 0);
-          spin.position.y = spin.userData.baseY;
+          spin.position.y = layoutY;
+          spin.position.z = 0;
         } else {
           spin.rotation.y = Math.sin(elapsed * 0.42 + phase) * 0.38 + item.pointer.x;
           spin.rotation.x = Math.sin(elapsed * 0.33 + phase) * 0.05 + item.pointer.y + mid * -0.16;
-          spin.position.y = spin.userData.baseY + Math.sin(elapsed * 1.15 + phase) * 0.04;
+          spin.position.y = layoutY + Math.sin(elapsed * 1.15 + phase) * 0.04;
         }
       });
 
-      const aspect = canvas.width / Math.max(canvas.height, 1);
-      frameCamera(item.camera, item.bounds.contentW, item.bounds.contentH, item.bounds.nearZ, item.bounds.lookY, aspect);
+      frameCamera(item.camera, item.products.length, stacked, width / heightPx);
+      renderer.setViewport(left * dpr, (height - (top + heightPx)) * dpr, width * dpr, heightPx * dpr);
+      renderer.setScissor(left * dpr, (height - (top + heightPx)) * dpr, width * dpr, heightPx * dpr);
+      renderer.clearDepth();
       renderer.render(item.scene, item.camera);
-      if (!blocked && !item.view.classList.contains("is-live") && frameHasProducts()) {
-        item.view.classList.add("is-live");
-        item.view.dataset.ready = "1";
-        canvas.style.visibility = "visible";
-        window.clearTimeout(timer);
-      }
+      item.view.classList.add("is-live");
+      item.view.dataset.ready = "1";
     }
-  }
-  if (blocked) giveUp();
-  } catch {
-    giveUp();
   }
 }
