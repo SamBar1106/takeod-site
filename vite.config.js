@@ -1,4 +1,7 @@
+import fs from "node:fs";
+import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -14,6 +17,7 @@ export default defineConfig(({ mode }) => {
       assetsInlineLimit: 2048,
     },
     plugins: [
+      react(),
       {
         name: "preload-critical-fonts",
         transformIndexHtml: {
@@ -32,6 +36,15 @@ export default defineConfig(({ mode }) => {
             if (!links.length) return html;
             return html.replace("</head>", `${links.join("\n")}\n</head>`);
           },
+        },
+      },
+      {
+        name: "spa-github-pages-404",
+        closeBundle() {
+          const dist = path.resolve("dist");
+          const index = path.join(dist, "index.html");
+          if (!fs.existsSync(index)) return;
+          fs.copyFileSync(index, path.join(dist, "404.html"));
         },
       },
     ],
