@@ -75,18 +75,38 @@ export async function getCatalogVersion(client) {
   return versionPromise;
 }
 
+const WIX_MEDIA_HOST = "https://static.wixstatic.com/media/";
+const IMAGE_WIDTHS = [600, 800, 1200, 1600];
+
+function fitUrl(fileId, width) {
+  return `${WIX_MEDIA_HOST}${fileId}/v1/fit/w_${width},h_${width},q_90/file.jpg`;
+}
+
+function imageWidths(originWidth) {
+  const cap = originWidth > 80 ? Math.min(originWidth, 1600) : 1600;
+  const widths = IMAGE_WIDTHS.filter((width) => width <= cap);
+  if (cap >= 600 && !widths.includes(cap)) widths.push(cap);
+  return widths.length ? widths.sort((a, b) => a - b) : [800];
+}
+
 export function wixImage(value, alt, width, height) {
   if (!value) return null;
-  const source = String(value);
-  if (source.startsWith("wix:")) {
+  const source = typeof value === "string" ? value : value.url || value.image || "";
+  if (!source) return null;
+  if (source.startsWith("wix:") || source.startsWith(WIX_MEDIA_HOST)) {
     try {
       const parsed = media.getImageUrl(source);
-      if (!parsed?.url) return null;
+      if (!parsed?.id) return null;
+      const originWidth = source.startsWith("wix:") && parsed.width > 80 ? parsed.width : width > 80 ? width : 0;
+      const originHeight = source.startsWith("wix:") && parsed.height > 80 ? parsed.height : height > 80 ? height : 0;
+      const widths = imageWidths(originWidth);
+      const target = widths.find((item) => item >= 800) || widths[widths.length - 1];
       return {
-        url: parsed.url,
+        url: fitUrl(parsed.id, target),
+        srcSet: widths.map((item) => `${fitUrl(parsed.id, item)} ${item}w`).join(", "),
         alt: alt || parsed.altText || "",
-        width: parsed.width || width || 1280,
-        height: parsed.height || height || 720,
+        width: originWidth || 1280,
+        height: originHeight || 720,
       };
     } catch {
       return null;

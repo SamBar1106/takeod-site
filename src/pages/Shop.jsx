@@ -19,8 +19,27 @@ const FILTERS = [
   { slug: "hats", label: "Hats & Beanies" },
 ];
 
-function normalizeSlug(slug) {
-  return FILTERS.some((item) => item.slug === slug) ? slug : "all";
+function productSlugs(product) {
+  if (product.categorySlugs?.length) return product.categorySlugs;
+  return product.categorySlug ? [product.categorySlug] : [];
+}
+
+function buildFilters(products) {
+  if (isDemoMode()) return FILTERS;
+  const labels = new Map(FILTERS.map((item) => [item.slug, item.label]));
+  const seen = [];
+  for (const product of products) {
+    for (const slug of productSlugs(product)) {
+      if (labels.has(slug) && FILTERS.some((item) => item.slug === slug)) continue;
+      const collection = product.collections?.find((item) => item.slug === slug);
+      if (!labels.has(slug)) {
+        labels.set(slug, collection?.label || slug);
+        seen.push(slug);
+      }
+    }
+  }
+  const stitch = FILTERS.filter((item) => item.slug === "all" || products.some((product) => productSlugs(product).includes(item.slug)));
+  return [...stitch, ...seen.map((slug) => ({ slug, label: labels.get(slug) }))];
 }
 
 export function Shop() {
@@ -28,7 +47,7 @@ export function Shop() {
   const { add } = useCart();
   const [products, setProducts] = useState(() => (isDemoMode() ? getLocalProducts() : []));
   const [status, setStatus] = useState(isDemoMode() ? "ready" : "loading");
-  const [filter, setFilter] = useState(() => normalizeSlug(slug));
+  const [filter, setFilter] = useState(() => (FILTERS.some((item) => item.slug === slug) ? slug : "all"));
   const [sort, setSort] = useState("match");
   const gridRef = useRef(null);
   const flipRef = useRef(null);
@@ -38,9 +57,15 @@ export function Shop() {
     document.title = "Official Family Affair Gear Catalog | Daykodee";
   }, []);
 
+  const filters = useMemo(() => buildFilters(products), [products]);
+
   useLayoutEffect(() => {
-    setFilter(normalizeSlug(slug));
-  }, [slug]);
+    if (!slug) {
+      setFilter("all");
+      return;
+    }
+    if (filters.some((item) => item.slug === slug)) setFilter(slug);
+  }, [slug, filters]);
 
   useLayoutEffect(() => {
     if (isDemoMode()) return undefined;
@@ -120,7 +145,9 @@ export function Shop() {
 
   const counts = useMemo(() => {
     const tally = { all: products.length };
-    for (const product of products) tally[product.categorySlug] = (tally[product.categorySlug] || 0) + 1;
+    for (const product of products) {
+      for (const category of productSlugs(product)) tally[category] = (tally[category] || 0) + 1;
+    }
     return tally;
   }, [products]);
 
@@ -161,7 +188,7 @@ export function Shop() {
           {status === "error" ? <p className="cart-note">The catalog could not be loaded.</p> : null}
           <fieldset>
             <legend>Product Categories</legend>
-            {FILTERS.map((item) => (
+            {filters.map((item) => (
               <button key={item.slug} type="button" aria-pressed={filter === item.slug} onClick={() => choose(item.slug)}>
                 <span>{item.label}</span>
                 <span>{counts[item.slug] || 0}</span>
@@ -194,12 +221,12 @@ export function Shop() {
           </div>
           <div className="product-grid" ref={gridRef}>
             {ordered.map((product) => {
-              const visible = filter === "all" || filter === product.categorySlug;
+              const visible = filter === "all" || productSlugs(product).includes(filter);
               return (
                 <article
                   className="card product-card"
                   key={product.id}
-                  data-category={product.categorySlug}
+                  data-category={productSlugs(product).join(" ")}
                   style={{ display: visible ? undefined : "none" }}
                 >
                   <AppLink className="product-card__media" to={`/shop/${product.id}`}>

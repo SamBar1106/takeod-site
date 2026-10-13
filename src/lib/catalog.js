@@ -6,16 +6,16 @@ const V3_FIELDS = [
   "CURRENCY",
   "MEDIA_ITEMS_INFO",
   "VARIANT_OPTION_CHOICE_NAMES",
-  "BREADCRUMBS_INFO",
+  "ALL_CATEGORIES_INFO",
   "THUMBNAIL",
 ];
 
 const CATEGORIES = [
-  { slug: "mugs", label: "Mugs", shopLabel: "Shop Mugs" },
-  { slug: "shirts", label: "Shirts", shopLabel: "Shop Shirts" },
-  { slug: "bags", label: "Bags", shopLabel: "Shop Bags" },
-  { slug: "water-bottles", label: "Water Bottles", shopLabel: "Shop Bottles" },
-  { slug: "hats", label: "Hats", shopLabel: "Shop Hats" },
+  { slug: "mugs", label: "Mugs & Drinkware", words: ["mug", "tumbler", "sippy", "drinkware"] },
+  { slug: "shirts", label: "Shirts & Apparel", words: ["shirt", "tee", "apparel", "polo"] },
+  { slug: "bags", label: "Backpacks & Bags", words: ["bag", "tote", "backpack"] },
+  { slug: "water-bottles", label: "Water Bottles", words: ["bottle"] },
+  { slug: "hats", label: "Hats & Beanies", words: ["hat", "beanie", "cap"] },
 ];
 
 export { isDemoMode };
@@ -35,19 +35,29 @@ function plainText(value) {
     .trim();
 }
 
-function categoryFromNames(names) {
-  const blob = names.filter(Boolean).join(" ").toLowerCase();
-  const match = CATEGORIES.find(
-    (item) => blob.includes(item.label.toLowerCase()) || blob.includes(item.slug.replaceAll("-", " ")),
-  );
-  if (!match) {
-    return {
-      category: names.find(Boolean) || "",
-      categorySlug: "",
-      shopLabel: "Shop Products",
-    };
-  }
-  return { category: match.label, categorySlug: match.slug, shopLabel: match.shopLabel };
+function wordHit(text, word) {
+  return new RegExp(`\\b${word}\\b`, "i").test(text);
+}
+
+function classifyProduct(name, collections) {
+  const text = [name, ...(collections || []).map((item) => item.label)].filter(Boolean).join(" ");
+  const matched = CATEGORIES.filter((item) => item.words.some((word) => wordHit(text, word)));
+  const categorySlugs = [...new Set([...matched.map((item) => item.slug), ...(collections || []).map((item) => item.slug)])];
+  return {
+    category: matched[0]?.label || collections?.[0]?.label || "",
+    categorySlug: categorySlugs[0] || "",
+    categorySlugs,
+    collections: collections || [],
+    shopLabel: "Add / Bulk Quote",
+  };
+}
+
+function mediaSource(item) {
+  if (!item) return "";
+  if (typeof item === "string") return item;
+  if (typeof item.image === "string") return item.image;
+  if (item.image?.url) return item.image.url;
+  return item.url || item.thumbnail?.url || "";
 }
 
 function stockFromStatus(status) {
@@ -79,7 +89,7 @@ function v1Images(product) {
   return items
     .map((item) => {
       const image = item?.image || item?.thumbnail;
-      return wixImage(image?.url, image?.altText || item?.title || product.name || "", image?.width, image?.height);
+      return wixImage(mediaSource(image) || mediaSource(item), image?.altText || item?.title || product.name || "");
     })
     .filter(Boolean);
 }
@@ -88,19 +98,14 @@ function v3Images(product) {
   const listed = product.media?.itemsInfo?.items;
   const items = listed?.length ? listed : [product.media?.main].filter(Boolean);
   return items
-    .map((item) =>
-      wixImage(
-        item?.url || item?.thumbnail?.url,
-        item?.altText || product.name || "",
-        item?.thumbnail?.width,
-        item?.thumbnail?.height,
-      ),
-    )
+    .map((item) => wixImage(mediaSource(item), item?.altText || product.name || ""))
     .filter(Boolean);
 }
 
-function normalizeV1(product, collectionNames) {
-  const names = (product.collectionIds || []).map((id) => collectionNames?.get(id)).filter(Boolean);
+function normalizeV1(product, catalogCollections) {
+  const joined = (product.collectionIds || [])
+    .map((id) => catalogCollections.find((item) => item.id === id))
+    .filter(Boolean);
   const price =
     product.priceData?.formatted?.discountedPrice ||
     product.price?.formatted?.discountedPrice ||
@@ -115,7 +120,7 @@ function normalizeV1(product, collectionNames) {
     description: plainText(product.description),
     priceLabel: price,
     images: v1Images(product),
-    ...categoryFromNames(names),
+    ...classifyProduct(product.name || "", joined),
     ...stock,
     catalogVersion: "v1",
     options: (product.productOptions || []).map((option) => ({
@@ -141,8 +146,9 @@ function normalizeV1(product, collectionNames) {
   };
 }
 
-function normalizeV3(product) {
-  const crumb = product.breadcrumbsInfo?.breadcrumbs?.at(-1)?.categoryName;
+function normalizeV3(product, catalogCollections) {
+  const ids = new Set((product.allCategoriesInfo?.categories || []).map((item) => item._id));
+  const joined = catalogCollections.filter((item) => ids.has(item.id));
   const stock = stockFromStatus(product.inventory?.availabilityStatus);
   const options = product.options || [];
   return {
@@ -152,7 +158,7 @@ function normalizeV3(product) {
     description: plainText(product.plainDescription),
     priceLabel: priceRangeLabel(product.actualPriceRange),
     images: v3Images(product),
-    ...categoryFromNames([crumb]),
+    ...classifyProduct(product.name || "", joined),
     ...stock,
     catalogVersion: "v3",
     options: options.map((option) => ({
@@ -189,32 +195,38 @@ function normalizeV3(product) {
   };
 }
 
-async function collectionNameMap(client) {
+async function catalogCollections(client) {
   try {
     const found = await client.collections.queryCollections().limit(100).find();
-    const names = new Map();
-    for (const collection of found.items || []) {
-      if (collection?._id && collection.name) names.set(collection._id, collection.name);
-    }
-    return names;
+    return (found.items || [])
+      .filter((collection) => collection?.visible !== false && collection?._id && collection.name)
+      .map((collection) => ({
+        id: collection._id,
+        slug: collection.slug || collection._id,
+        label: String(collection.name).trim(),
+      }))
+      .filter((collection) => collection.slug !== "all-products" && !/^all products$/i.test(collection.label));
   } catch {
-    return new Map();
+    return [];
   }
 }
 
 async function loadV1Products(client) {
-  const [found, names] = await Promise.all([
+  const [found, collections] = await Promise.all([
     client.products.queryProducts().limit(100).find(),
-    collectionNameMap(client),
+    catalogCollections(client),
   ]);
   const items = await collectPages(found);
-  return items.filter((item) => item?.visible !== false).map((item) => normalizeV1(item, names));
+  return items.filter((item) => item?.visible !== false).map((item) => normalizeV1(item, collections));
 }
 
 async function loadV3Products(client) {
-  const found = await client.productsV3.queryProducts({ fields: V3_FIELDS }).limit(100).find();
+  const [found, collections] = await Promise.all([
+    client.productsV3.queryProducts({ fields: V3_FIELDS }).limit(100).find(),
+    catalogCollections(client),
+  ]);
   const items = await collectPages(found);
-  return items.filter((item) => item?.visible !== false).map((item) => normalizeV3(item));
+  return items.filter((item) => item?.visible !== false).map((item) => normalizeV3(item, collections));
 }
 
 export async function getProducts() {
@@ -227,7 +239,7 @@ export async function getProducts() {
 }
 
 async function loadV1Product(client, id) {
-  const [response, names] = await Promise.all([client.products.getProduct(id), collectionNameMap(client)]);
+  const [response, collections] = await Promise.all([client.products.getProduct(id), catalogCollections(client)]);
   const product = response?.product ?? response;
   if (!product?._id) return null;
   let variants = product.variants;
@@ -239,14 +251,17 @@ async function loadV1Product(client, id) {
       variants = [];
     }
   }
-  return normalizeV1({ ...product, variants }, names);
+  return normalizeV1({ ...product, variants }, collections);
 }
 
 async function loadV3Product(client, id) {
-  const product = await client.productsV3.getProduct(id, { fields: V3_FIELDS });
+  const [product, collections] = await Promise.all([
+    client.productsV3.getProduct(id, { fields: V3_FIELDS }),
+    catalogCollections(client),
+  ]);
   const record = product?.product ?? product;
   if (!record?._id) return null;
-  return normalizeV3(record);
+  return normalizeV3(record, collections);
 }
 
 export async function getProduct(id) {
