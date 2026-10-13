@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useCart } from "../context/CartContext.jsx";
+import { lineTotal, useCart } from "../context/CartContext.jsx";
 import { MediaPicture } from "./MediaPicture.jsx";
 
 function QtyField({ item, busy, setQuantity }) {
@@ -44,7 +44,7 @@ export function CartLines({ items }) {
           <div className="cart-line__copy">
             <p className="cart-line__name">{item.name}</p>
             {item.optionsLabel ? <p className="cart-line__options">{item.optionsLabel}</p> : null}
-            <p className="cart-line__price">{item.lineTotalLabel || item.priceLabel}</p>
+            <p className="cart-line__price">{lineTotal(item)}</p>
             <div className="cart-line__qty">
               <button
                 type="button"

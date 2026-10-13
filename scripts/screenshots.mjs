@@ -51,10 +51,10 @@ async function shoot(browserType, label, contextOptions) {
     });
   }
   await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load", timeout: 60000 });
-  await page.getByRole("button", { name: "Add to Cart" }).click();
+  await page.getByRole("button", { name: "Add to Order & Apply Bulk Tier" }).click();
   await page.waitForSelector(".cart-drawer", { timeout: 5000 });
   const drawerText = await page.locator(".cart-drawer").innerText();
-  if (!drawerText.includes("Sample Mug") || !drawerText.includes("Subtotal")) {
+  if (!drawerText.includes("Bistro Mug") || !drawerText.includes("Subtotal")) {
     errors.push(`${label} cart drawer missing item or subtotal`);
   }
   await page.screenshot({ path: path.join(outDir, `cart-drawer-${label}.png`) });
@@ -64,8 +64,8 @@ async function shoot(browserType, label, contextOptions) {
   const cartBanner = (await page.locator(".demo-banner").innerText()).trim();
   if (cartBanner !== "Demo mode") cartFailed.push(`demo banner was "${cartBanner}"`);
   const cartText = await page.locator("main").innerText();
-  if (!cartText.includes("Sample Mug") || !cartText.includes("PLACEHOLDER") || !cartText.includes("Subtotal")) {
-    cartFailed.push("cart page missing item, placeholder subtotal, or subtotal");
+  if (!cartText.includes("Bistro Mug") || !cartText.includes("$") || !cartText.includes("Subtotal")) {
+    cartFailed.push("cart page missing item, subtotal amount, or subtotal");
   }
   const cartOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   if (cartOverflow > 2) cartFailed.push(`horizontal overflow ${cartOverflow}px`);
@@ -90,17 +90,17 @@ const check = await chromium.launch();
 const context = await check.newContext({ viewport: { width: 1280, height: 800 } });
 const page = await context.newPage();
 await page.goto(`${base}/shop`, { waitUntil: "load" });
-await page.getByRole("button", { name: "Hats" }).click();
+await page.getByRole("button", { name: "Hats & Beanies" }).click();
 await page.waitForTimeout(700);
 const hats = await page.locator(".product-card").evaluateAll((cards) =>
   cards.filter((card) => card.style.display !== "none").map((card) => card.textContent),
 );
-if (!hats.some((text) => text.includes("Sample Hat"))) errors.push("filter did not show the sample hat");
+if (!hats.some((text) => text.includes("UV50+"))) errors.push("filter did not show the sample hat");
 await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load" });
-await page.getByRole("button", { name: "Add to Cart" }).click();
+await page.getByRole("button", { name: "Add to Order & Apply Bulk Tier" }).click();
 await page.waitForSelector(".cart-drawer");
 await page.goto(`${base}/cart`, { waitUntil: "load" });
-await page.getByRole("button", { name: "Checkout" }).click();
+await page.getByRole("button", { name: "Proceed to Checkout" }).click();
 await page.waitForFunction(() => document.querySelector("h1")?.textContent?.includes("PLACEHOLDER — Checkout"), null, {
   timeout: 8000,
 });
@@ -113,6 +113,14 @@ const muted = await page.goto(`${base}/`, { waitUntil: "load" }).then(async () =
   })),
 );
 if (!muted.muted || !muted.playsInline) errors.push(`hero video attrs ${JSON.stringify(muted)}`);
+const cursor = await page.evaluate(() => ({
+  html: document.documentElement.className,
+  cursor: getComputedStyle(document.body).cursor,
+  ring: document.querySelector(".cursor-ring, .cursor-dot"),
+}));
+if (cursor.html.includes("has-cursor") || cursor.cursor === "none" || cursor.ring) {
+  errors.push(`custom cursor still active ${JSON.stringify(cursor)}`);
+}
 await check.close();
 
 if (errors.length) {

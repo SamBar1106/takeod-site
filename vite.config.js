@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
           order: "post",
           handler(html, ctx) {
             if (!ctx.bundle) return html;
-            const want = ["montserrat-latin-900", "open-sans-latin-400"];
+            const want = ["plus-jakarta-sans-latin-800", "plus-jakarta-sans-latin-400"];
             const links = [];
             for (const item of Object.values(ctx.bundle)) {
               if (item.type !== "asset" || !item.fileName.endsWith(".woff2")) continue;

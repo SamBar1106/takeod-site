@@ -24,14 +24,12 @@ export function Layout() {
       <a className="skip" href="#main">
         Skip to content
       </a>
-      <div className="site-top">
-        {isDemoMode() ? (
-          <p className="demo-banner" role="status">
-            Demo mode
-          </p>
-        ) : null}
-        <Header />
-      </div>
+      {isDemoMode() ? (
+        <p className="demo-banner" role="status">
+          Demo mode
+        </p>
+      ) : null}
+      <Header />
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>

@@ -1,27 +1,35 @@
 {
   "products": [
     {
-      "id": "sample-mug",
-      "name": "PLACEHOLDER — Sample Mug",
-      "category": "Mugs",
-      "categorySlug": "mugs",
-      "shopLabel": "Shop Mugs",
-      "priceLabel": "PLACEHOLDER",
-      "description": "Cheerful ceramic mugs for teacher gifts, parent nights and keepsakes families hold on to.",
+      "id": "sample-bottle",
+      "name": "Little Explorer 14oz Insulated Water Bottle",
+      "category": "Water Bottles",
+      "categorySlug": "water-bottles",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Best Seller",
+      "rating": "4.9 (84)",
+      "priceLabel": "$14.50",
+      "tierLabel": "Tier 25+",
+      "tierPrice": "$9.80 / ea",
+      "description": "Leak-proof cap with laser-etched name field.",
       "images": [
+        { "file": "poster-h1-1280.webp", "alt": "Branded water bottles", "width": 1280, "height": 720 },
         { "set": "c2", "alt": "Branded ceramic mugs and water bottles" },
-        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 },
-        { "file": "poster-h1-1280.webp", "alt": "Branded water bottles", "width": 1280, "height": 720 }
+        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 }
       ]
     },
     {
       "id": "sample-shirt",
-      "name": "PLACEHOLDER — Sample Shirt",
+      "name": "Family Affair Classic Heavyweight Toddler Tee",
       "category": "Shirts",
       "categorySlug": "shirts",
-      "shopLabel": "Shop Shirts",
-      "priceLabel": "PLACEHOLDER",
-      "description": "Soft, kid-friendly tees for field trips, picture day and showing center pride.",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Campus Essential",
+      "rating": "5.0 (142)",
+      "priceLabel": "$12.00",
+      "tierLabel": "Tier 25+",
+      "tierPrice": "$7.50 / ea",
+      "description": "100% ring-spun organic cotton, wash-proof colors.",
       "images": [
         { "set": "c1", "alt": "Branded shirts and hats" },
         { "file": "poster-h4.webp", "alt": "Branded tees", "width": 1280, "height": 720 }
@@ -29,43 +37,104 @@
     },
     {
       "id": "sample-bag",
-      "name": "PLACEHOLDER — Sample Bag",
+      "name": "Cubby-Mate Water-Resistant Toddler Backpack",
       "category": "Bags",
       "categorySlug": "bags",
-      "shopLabel": "Shop Bags",
-      "priceLabel": "PLACEHOLDER",
-      "description": "Sturdy totes for take-home folders, art projects and everything in between.",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Center Favorite",
+      "rating": "4.8 (67)",
+      "priceLabel": "$22.00",
+      "tierLabel": "Tier 25+",
+      "tierPrice": "$16.00 / ea",
+      "description": "Sized perfectly for cubbies with name tag sleeve.",
       "images": [
         { "set": "c3", "alt": "Branded tote bags" },
-        { "file": "float-why.webp", "alt": "Branded tote bags", "width": 640, "height": 360 },
-        { "file": "poster-h3.webp", "alt": "Branded bags", "width": 1280, "height": 720 }
+        { "file": "float-why.webp", "alt": "Branded tote bags", "width": 640, "height": 360 }
       ]
     },
     {
-      "id": "sample-bottle",
-      "name": "PLACEHOLDER — Sample Water Bottle",
-      "category": "Water Bottles",
-      "categorySlug": "water-bottles",
-      "shopLabel": "Shop Bottles",
-      "priceLabel": "PLACEHOLDER",
-      "description": "Kid-sized bottles that make it easy to stay hydrated on the playground and on the go.",
+      "id": "sample-mug",
+      "name": "Director & Teacher Ceramic Bistro Mug 16oz",
+      "category": "Mugs",
+      "categorySlug": "mugs",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Staff Pick",
+      "rating": "4.9 (53)",
+      "priceLabel": "$16.00",
+      "tierLabel": "Tier 12+",
+      "tierPrice": "$11.00 / ea",
+      "description": "Dishwasher safe heavy stoneware for educators.",
       "images": [
-        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 },
-        { "set": "c2", "alt": "Branded kid-sized water bottles" },
-        { "file": "poster-h1-1280.webp", "alt": "Branded water bottles", "width": 1280, "height": 720 }
+        { "set": "c2", "alt": "Branded ceramic mugs and water bottles" },
+        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 }
       ]
     },
     {
       "id": "sample-hat",
-      "name": "PLACEHOLDER — Sample Hat",
+      "name": "UV50+ Sun Protection Adventure Bucket Hat",
       "category": "Hats",
       "categorySlug": "hats",
-      "shopLabel": "Shop Hats",
-      "priceLabel": "PLACEHOLDER",
-      "description": "Adjustable caps for outdoor play, summer programs and sunny-day outings.",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Summer Ready",
+      "rating": "4.9 (41)",
+      "priceLabel": "$15.00",
+      "tierLabel": "Tier 25+",
+      "tierPrice": "$9.50 / ea",
+      "description": "Breakaway safety chin strap and moisture-wicking band.",
       "images": [
         { "set": "c1", "alt": "Branded adjustable caps" },
         { "file": "poster-h2.webp", "alt": "Branded caps", "width": 1280, "height": 720 }
+      ]
+    },
+    {
+      "id": "sample-neon",
+      "name": "Field Trip High-Visibility Neon Accent Tee",
+      "category": "Shirts",
+      "categorySlug": "shirts",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "High Vis",
+      "rating": "5.0 (98)",
+      "priceLabel": "$11.50",
+      "tierLabel": "Tier 50+",
+      "tierPrice": "$6.90 / ea",
+      "description": "Instant head-count visibility during outdoor excursions.",
+      "images": [
+        { "file": "poster-h4.webp", "alt": "Branded tees", "width": 1280, "height": 720 },
+        { "set": "c1", "alt": "Branded shirts and hats" }
+      ]
+    },
+    {
+      "id": "sample-tumbler",
+      "name": "Stainless Steel Spill-Proof Snack & Sip Tumbler",
+      "category": "Mugs",
+      "categorySlug": "mugs",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Toddler Safe",
+      "rating": "4.7 (39)",
+      "priceLabel": "$18.00",
+      "tierLabel": "Tier 25+",
+      "tierPrice": "$12.50 / ea",
+      "description": "Dual compartment top for crackers and fresh snacks.",
+      "images": [
+        { "file": "float-hero.webp", "alt": "Branded mugs and water bottles", "width": 640, "height": 360 },
+        { "set": "c2", "alt": "Branded kid-sized water bottles" }
+      ]
+    },
+    {
+      "id": "sample-tote",
+      "name": "Heavy-Duty Canvas Teacher & Parent Tote Bag",
+      "category": "Bags",
+      "categorySlug": "bags",
+      "shopLabel": "Add / Bulk Quote",
+      "badge": "Staff Carry",
+      "rating": "4.8 (28)",
+      "priceLabel": "$19.50",
+      "tierLabel": "Tier 25+",
+      "tierPrice": "$13.00 / ea",
+      "description": "Roomy canvas tote for folders, art, and center supplies.",
+      "images": [
+        { "set": "c3", "alt": "Branded tote bags" },
+        { "file": "poster-h3.webp", "alt": "Branded bags", "width": 1280, "height": 720 }
       ]
     }
   ]

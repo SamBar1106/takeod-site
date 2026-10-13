@@ -85,6 +85,12 @@ function mountStory(root) {
   const panels = [...root.querySelectorAll(".story__panel")];
   if (!viewport || !track || !panels.length) return () => {};
 
+  const pinTop = () => {
+    const header = document.querySelector(".site-header");
+    const banner = document.querySelector(".demo-banner");
+    return Math.round((header?.getBoundingClientRect().height || 0) + (banner?.getBoundingClientRect().height || 0));
+  };
+  root.style.setProperty("--pin-offset", `${pinTop()}px`);
   root.classList.add("is-animated");
   const size = () => {
     const width = viewport.clientWidth;
@@ -138,7 +144,7 @@ function mountStory(root) {
     ease: "none",
     scrollTrigger: {
       trigger: root,
-      start: "top 72px",
+      start: () => `top ${pinTop()}px`,
       end: () => `+=${size() + window.innerHeight * 0.15}`,
       pin: viewport,
       scrub: 0.6,

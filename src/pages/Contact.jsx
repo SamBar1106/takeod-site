@@ -3,27 +3,26 @@ import { AppLink } from "../components/AppLink.jsx";
 
 export function Contact() {
   useEffect(() => {
-    document.title = "Ready to Outfit Your Center? | Daykodee";
+    document.title = "Ready to Outfit Your Center for the New Term? | Daykodee";
   }, []);
 
   return (
-    <section className="section cta cta--page" aria-labelledby="contact-title">
-      <div className="section__stage">
-        <div className="cta__blocks" aria-hidden="true">
-          <span className="cta__block cta__block--a" />
-          <span className="cta__block cta__block--b" />
-          <span className="cta__block cta__block--c" />
+    <section className="closer" aria-labelledby="contact-title">
+      <div className="wrap">
+        <h1 id="contact-title">Ready to Outfit Your Center for the New Term?</h1>
+        <p>
+          Get instant volume pricing, custom student rosters sorted, and a free sample sizing kit sent to your campus
+          office.
+        </p>
+        <div className="hero-actions" data-magnetic>
+          <AppLink className="btn btn--gold" to="/shop">
+            Browse 2025 Catalog
+          </AppLink>
+          <AppLink className="btn btn--ghost" to="/shop">
+            Download Director PDF Catalog
+          </AppLink>
         </div>
-        <div className="wrap cta__inner">
-          <h1 id="contact-title">Ready to Outfit Your Center?</h1>
-          <p>Browse the catalog, or tell us what you need and we'll put together a quote.</p>
-          <div className="cta__actions">
-            <AppLink className="btn btn--primary" to="/shop">
-              Shop Products
-              <span className="btn__sweep" aria-hidden="true" />
-            </AppLink>
-          </div>
-        </div>
+        <p className="help-line">Need a custom sample box? Call Director Support: (800) 555-DAYK</p>
       </div>
     </section>
   );
