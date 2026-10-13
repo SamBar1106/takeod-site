@@ -55,11 +55,7 @@ export function CartDrawer() {
             Close
           </button>
         </div>
-        <p className="tier-note--drawer">
-          <AppLink className="group-link" to="/contact" onClick={closeDrawer}>
-            Ordering for a group? Contact us
-          </AppLink>
-        </p>
+        <p className="tier-note--drawer">Bulk discounts apply automatically at 25+ units.</p>
         <CartLines items={items} />
         {!items.length ? <p>Your center cart is empty.</p> : null}
         {error ? <p className="cart-note">{error}</p> : null}
@@ -68,6 +64,10 @@ export function CartDrawer() {
             <p className="cart-subtotal">
               <span>Subtotal</span>
               <span>{subtotalLabel}</span>
+            </p>
+            <p>
+              <span>Campus Direct Freight</span>
+              <span>At checkout</span>
             </p>
             <p className="cart-total">
               <span>Total Investment</span>
@@ -82,7 +82,14 @@ export function CartDrawer() {
           <AppLink className="btn btn--ghost" to="/cart" onClick={closeDrawer}>
             View Cart
           </AppLink>
+          <AppLink className="btn btn--ghost" to="/contact" onClick={closeDrawer}>
+            Download Formal Purchase Order Quote PDF
+          </AppLink>
         </div>
+        <p className="cart-assure">
+          <span>Net-30 Available</span>
+          <span>100% Reprint Guarantee</span>
+        </p>
       </div>
     </div>
   );
