@@ -54,7 +54,7 @@ export function Shop() {
   const skipFlip = useRef(true);
 
   useLayoutEffect(() => {
-    document.title = "Family Affair Gear Catalog | Daykodee";
+    document.title = "Official Family Affair Gear Catalog | Daykodee";
   }, []);
 
   const filters = useMemo(() => buildFilters(products), [products]);
@@ -156,16 +156,29 @@ export function Shop() {
       <section className="catalog-hero">
         <div className="wrap catalog-hero__grid">
           <div>
-            <p className="eyebrow">Daykodee</p>
-            <h1>Family Affair Gear Catalog</h1>
-            <p>Equip classrooms, staff, and little learners with durable gear.</p>
+            <p className="eyebrow">Official Center Merchandise Portal</p>
+            <h1>Official Family Affair Gear Catalog</h1>
+            <p>
+              Equip classrooms, staff, and little learners with durable, campus-certified gear. Enjoy automated tiered
+              bulk pricing and expedited center fulfillment.
+            </p>
           </div>
           <aside className="savings-ticket">
-            <p>
-              <AppLink className="group-link" to="/contact">
-                Ordering for a group? Contact us
-              </AppLink>
-            </p>
+            <p>Automated Tiered Savings</p>
+            <ul>
+              <li>
+                <span>12+ items</span>
+                <strong>Save 15%</strong>
+              </li>
+              <li>
+                <span>25+ items</span>
+                <strong>Save 25%</strong>
+              </li>
+              <li>
+                <span>50+ items</span>
+                <strong>Save 40%</strong>
+              </li>
+            </ul>
           </aside>
         </div>
       </section>
@@ -182,13 +195,14 @@ export function Shop() {
               </button>
             ))}
           </fieldset>
+          <div className="filter-note">
+            <h3>Price Range</h3>
+            <p>$8 – $45</p>
+          </div>
           <div className="filter-help">
-            <h3>Ordering for a group?</h3>
-            <p>
-              <AppLink className="group-link" to="/contact">
-                Contact us
-              </AppLink>
-            </p>
+            <h3>Need Tax-Exempt PO?</h3>
+            <p>Center directors can submit custom logo requests or upload purchase orders directly.</p>
+            <AppLink to="/contact">Open PO Invoice Form</AppLink>
           </div>
         </aside>
         <div>
@@ -230,10 +244,16 @@ export function Shop() {
                         <span>Single Unit</span>
                         <strong>{product.priceLabel}</strong>
                       </p>
+                      {product.tierPrice ? (
+                        <p>
+                          <span>{product.tierLabel || "Tier 25+"}</span>
+                          <strong>{product.tierPrice}</strong>
+                        </p>
+                      ) : null}
                     </div>
                     {product.stockLabel ? <p className="stock">{product.stockLabel}</p> : null}
                     <button className="btn btn--gold" type="button" onClick={() => add({ product, quantity: 1 })}>
-                      {product.shopLabel || "Add to Cart"}
+                      {product.shopLabel || "Add / Bulk Quote"}
                     </button>
                   </div>
                 </article>
@@ -245,17 +265,13 @@ export function Shop() {
       <section className="closer closer--slim">
         <div className="wrap">
           <h2>Planning an All-Campus Order or Center Uniform Refresh?</h2>
-          <p>
-            <AppLink className="group-link" to="/contact">
-              Ordering for a group? Contact us
-            </AppLink>
-          </p>
+          <p>We provide custom colorways, teacher name personalization, and direct monthly invoice billing for multi-center networks.</p>
           <div className="hero-actions">
             <AppLink className="btn btn--gold" to="/contact">
-              Contact us
+              Request Custom Center Quote
             </AppLink>
-            <AppLink className="btn btn--ghost" to="/shop">
-              Shop Products
+            <AppLink className="btn btn--ghost" to="/contact">
+              Download PDF Catalog
             </AppLink>
           </div>
         </div>

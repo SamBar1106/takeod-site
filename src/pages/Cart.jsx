@@ -22,9 +22,7 @@ export function Cart() {
       <div className="section__stage">
         <div className="wrap">
           <h1>Your Center Cart</h1>
-          <p>
-            <AppLink className="group-link" to="/contact">Ordering for a group? Contact us</AppLink>
-          </p>
+          <p>Bulk discounts apply automatically at 25+ units.</p>
           <CartLines items={items} />
           {error ? <p className="cart-note">{error}</p> : null}
           {items.length ? (

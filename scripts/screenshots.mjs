@@ -51,7 +51,7 @@ async function shoot(browserType, label, contextOptions) {
     });
   }
   await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load", timeout: 60000 });
-  await page.getByRole("button", { name: "Add to Cart" }).click();
+  await page.getByRole("button", { name: "Add to Order & Apply Bulk Tier" }).click();
   await page.waitForSelector(".cart-drawer", { timeout: 5000 });
   const drawerText = await page.locator(".cart-drawer").innerText();
   if (!drawerText.includes("Bistro Mug") || !drawerText.includes("Subtotal")) {
@@ -97,7 +97,7 @@ const hats = await page.locator(".product-card").evaluateAll((cards) =>
 );
 if (!hats.some((text) => text.includes("UV50+"))) errors.push("filter did not show the sample hat");
 await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load" });
-await page.getByRole("button", { name: "Add to Cart" }).click();
+await page.getByRole("button", { name: "Add to Order & Apply Bulk Tier" }).click();
 await page.waitForSelector(".cart-drawer");
 await page.goto(`${base}/cart`, { waitUntil: "load" });
 await page.getByRole("button", { name: "Proceed to Checkout" }).click();

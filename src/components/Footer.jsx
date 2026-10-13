@@ -15,19 +15,21 @@ const COLUMNS = [
   {
     title: "Center Director Resources",
     links: [
-      { to: "/contact", label: "Ordering for a group? Contact us" },
-      { to: "/shop", label: "Shop Products" },
-      { to: "/about", label: "About Daykodee" },
-      { to: "/faq", label: "Frequently Asked Questions" },
+      { to: "/shop", label: "Bulk Ordering Matrix (25+ Units)" },
+      { to: "/contact", label: "Custom Logo Quote Request" },
+      { to: "/contact", label: "Center Director Account Portal" },
+      { to: "/contact", label: "Tax-Exempt PO & Invoicing" },
+      { to: "/contact", label: "Request Sample Sizing Kit" },
     ],
   },
   {
     title: "Help & Policies",
     links: [
       { to: "/shipping", label: "Direct-to-Center Shipping" },
+      { to: "/shipping", label: "Returns & Defect Replacements" },
       { to: "/faq", label: "Frequently Asked Questions" },
-      { to: "/privacy", label: "Privacy Policy" },
-      { to: "/contact", label: "Contact" },
+      { to: "/privacy", label: "Privacy Policy & Terms" },
+      { to: "/contact", label: "Dedicated Support Desk" },
     ],
   },
 ];
@@ -41,9 +43,12 @@ export function Footer() {
             <img className="brand__img" src={`${MEDIA}logo.webp`} alt="" width="720" height="473" />
             <span className="brand__word">Daykodee</span>
           </AppLink>
-          <p>Daykodee is the merchandise shop for Family Affair Child Care Centers locations.</p>
+          <p>
+            Branded gear crafted exclusively for Family Affair Childcare Centers. Premium materials, durable embroidery,
+            and seamless volume tier pricing for centers and families.
+          </p>
           <AppLink className="pill" to="/contact">
-            Contact us
+            Official Partner Portal
           </AppLink>
         </div>
         {COLUMNS.map((column) => (
@@ -60,13 +65,13 @@ export function Footer() {
         ))}
       </div>
       <div className="wrap site-footer__legal">
-        <p>© 2025 Daykodee Gear Co. All rights reserved.</p>
+        <p>© 2025 Daykodee Gear Co. Official licensed merchandiser for Family Affair Childcare Centers. All rights reserved.</p>
         <p>
           <AppLink to="/terms">Terms of Service</AppLink>
           <span aria-hidden="true"> · </span>
           <AppLink to="/privacy">Privacy Policy</AppLink>
           <span aria-hidden="true"> · </span>
-          <AppLink to="/shipping">Shipping</AppLink>
+          <AppLink to="/shipping">Child Safety Compliance</AppLink>
         </p>
       </div>
     </footer>
