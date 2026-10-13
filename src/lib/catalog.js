@@ -48,7 +48,7 @@ function classifyProduct(name, collections) {
     categorySlug: categorySlugs[0] || "",
     categorySlugs,
     collections: collections || [],
-    shopLabel: "Add / Bulk Quote",
+    shopLabel: "Add to Cart",
   };
 }
 

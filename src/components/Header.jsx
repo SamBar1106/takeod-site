@@ -9,7 +9,6 @@ const LINKS = [
   { to: "/about", label: "About" },
   { to: "/faq", label: "FAQ" },
   { to: "/contact", label: "Contact" },
-  { to: "/contact", label: "Bulk Quote" },
 ];
 
 export function Header() {
@@ -31,8 +30,10 @@ export function Header() {
     <header className="site-header">
       <div className="announce" role="region" aria-label="Center notice">
         <p className="announce__track">
-          <span>★ Official Gear Partner of Family Affair Childcare Centers | Bulk Discounts Applied Automatically at 25+ Units | Fast Shipping to All Locations ★</span>
-          <span aria-hidden="true">★ Official Gear Partner of Family Affair Childcare Centers | Bulk Discounts Applied Automatically at 25+ Units | Fast Shipping to All Locations ★</span>
+          <span>
+            <AppLink to="/contact">Ordering for a group? Contact us</AppLink>
+          </span>
+          <span aria-hidden="true">Ordering for a group? Contact us</span>
         </p>
       </div>
       <div className="site-header__bar">

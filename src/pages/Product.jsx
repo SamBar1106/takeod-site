@@ -207,11 +207,11 @@ export function Product() {
             </div>
           </div>
           <p className="product-price">{priceLabel}</p>
-          {product.tierPrice ? (
-            <p className="tier-note">
-              {product.tierLabel} {product.tierPrice}
-            </p>
-          ) : null}
+          <p className="tier-note">
+            <AppLink className="group-link" to="/contact">
+              Ordering for a group? Contact us
+            </AppLink>
+          </p>
           {stockLabel ? <p className="product-stock">{stockLabel}</p> : null}
           <button
             className="btn btn--gold"
@@ -222,11 +222,8 @@ export function Product() {
               add({ product, variant, quantity });
             }}
           >
-            {canAdd ? "Add to Order & Apply Bulk Tier" : "Out of stock"}
+            {canAdd ? "Add to Cart" : "Out of stock"}
           </button>
-          <AppLink className="btn btn--line" to="/contact">
-            Request Free Campus Sample
-          </AppLink>
           <ul className="assure">
             {/\bmugs?\b|\btumblers?\b|\bdrinkware\b|\bcups?\b/i.test(
               `${product.name} ${product.category} ${(product.categorySlugs || []).join(" ")}`,
@@ -234,7 +231,6 @@ export function Product() {
               <li>Dishwasher Safe Rack</li>
             ) : null}
             <li>BPA & Lead Free</li>
-            <li>Fast Center Dispatch</li>
           </ul>
         </div>
       </div>
@@ -242,26 +238,13 @@ export function Product() {
         <Accordion heading="Product Specs & Durability">
           <p>{product.description}</p>
         </Accordion>
-        <Accordion heading="Bulk Pricing Matrix">
-          <p>
-            {product.priceLabel} single unit
-            {product.tierPrice ? `. ${product.tierLabel} ${product.tierPrice}.` : "."} Volume pricing activates on
-            verified center accounts.
-          </p>
-        </Accordion>
         <Accordion heading="Sanitation & Dishwasher Care">
-          <p>Fully approved for commercial high-heat spray washers. Top-rack placement recommended for silicone seals.</p>
-        </Accordion>
-        <Accordion heading="Director Reviews">
-          <p>
-            Campus directors order this gear for classrooms that need labeled, durable pieces that survive daily wash
-            cycles.
-          </p>
+          <p>Care depends on the piece. Drinkware pages note when an item is marked dishwasher safe.</p>
         </Accordion>
       </div>
       {related.length ? (
         <div className="wrap related">
-          <h2>Frequently Outfitted Together</h2>
+          <h2>More from the catalog</h2>
           <div className="related-grid">
             {related.map((item) => (
               <AppLink className="related-card" key={item.id} to={`/shop/${item.id}`}>

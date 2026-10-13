@@ -151,6 +151,12 @@ fieldset {
   white-space: nowrap;
 }
 
+.announce a,
+.group-link {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 @keyframes announce {
   from {
     transform: translateX(0);
@@ -857,6 +863,7 @@ h2 {
 }
 
 .savings-ticket {
+  align-self: start;
   padding: 1rem;
 }
 
