@@ -4,7 +4,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CartProvider } from "./context/CartContext.jsx";
 import { prefersReducedMotion } from "./lib/motion.js";
-import { CustomCursor } from "./components/CustomCursor.jsx";
 import { Layout } from "./components/Layout.jsx";
 import { ScrollProgress } from "./components/ScrollProgress.jsx";
 import { SmoothScroll, useLenis } from "./components/SmoothScroll.jsx";
@@ -163,7 +162,6 @@ export default function App() {
       <CartProvider>
         <SmoothScroll>
           <ScrollProgress />
-          <CustomCursor />
           <TransitionShell />
         </SmoothScroll>
       </CartProvider>
