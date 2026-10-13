@@ -8,8 +8,6 @@ import { AppLink } from "../components/AppLink.jsx";
 import { MediaPicture } from "../components/MediaPicture.jsx";
 import { Accordion } from "../components/Accordion.jsx";
 
-const COLORS = ["Navy & Gold", "Royal Blue", "Warm Cream", "Sunshine Gold"];
-
 function initialSelection(product) {
   const selected = {};
   for (const option of product?.options || []) {
@@ -40,7 +38,6 @@ export function Product() {
   const [zoomed, setZoomed] = useState(false);
   const [selected, setSelected] = useState({});
   const [quantity, setQuantity] = useState(1);
-  const [color, setColor] = useState(COLORS[0]);
   const frameRef = useRef(null);
   const imgRef = useRef(null);
 
@@ -179,16 +176,6 @@ export function Product() {
           <h1>{product.name}</h1>
           <p>{product.description}</p>
           {product.rating ? <p className="stars">★ {product.rating}</p> : null}
-          <fieldset className="product-option">
-            <legend>Selected Color</legend>
-            <div className="product-option__choices">
-              {COLORS.map((choice) => (
-                <button key={choice} type="button" aria-pressed={color === choice} onClick={() => setColor(choice)}>
-                  {choice}
-                </button>
-              ))}
-            </div>
-          </fieldset>
           {options.map((option) => (
             <fieldset key={option.name} className="product-option">
               <legend>{option.name}</legend>
@@ -241,7 +228,11 @@ export function Product() {
             Request Free Campus Sample
           </AppLink>
           <ul className="assure">
-            <li>Dishwasher Safe Rack</li>
+            {/\bmugs?\b|\btumblers?\b|\bdrinkware\b|\bcups?\b/i.test(
+              `${product.name} ${product.category} ${(product.categorySlugs || []).join(" ")}`,
+            ) ? (
+              <li>Dishwasher Safe Rack</li>
+            ) : null}
             <li>BPA & Lead Free</li>
             <li>Fast Center Dispatch</li>
           </ul>

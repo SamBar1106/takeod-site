@@ -14,6 +14,7 @@ export function MediaPicture({ image, sizes = DEFAULT_SIZES, loading = "lazy", f
         ref={ref}
         className={className}
         src={image.url}
+        srcSet={image.srcSet}
         alt={image.alt || ""}
         width={image.width || 1280}
         height={image.height || 720}
