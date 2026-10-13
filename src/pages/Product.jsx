@@ -1,31 +1,51 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import gsap from "gsap";
-import { getApiBaseUrl, getLocalProducts, getProduct } from "../lib/catalog.js";
+import { getLocalProducts, getProduct, isDemoMode } from "../lib/catalog.js";
 import { finePointer, prefersReducedMotion } from "../lib/motion.js";
 import { useCart } from "../context/CartContext.jsx";
 import { AppLink } from "../components/AppLink.jsx";
 import { MediaPicture } from "../components/MediaPicture.jsx";
 
+function initialSelection(product) {
+  const selected = {};
+  for (const option of product?.options || []) {
+    const available = (option.choices || []).find((choice) => choice.inStock !== false) || option.choices?.[0];
+    if (option.name && available?.value) selected[option.name] = available.value;
+  }
+  return selected;
+}
+
+function matchVariant(product, selected) {
+  const variants = product?.variants || [];
+  if (!variants.length) return null;
+  return (
+    variants.find((variant) =>
+      Object.entries(variant.choices || {}).every(([name, value]) => selected[name] === value),
+    ) || null
+  );
+}
+
 export function Product() {
   const { productId } = useParams();
-  const navigate = useNavigate();
   const { add } = useCart();
   const [product, setProduct] = useState(() => {
-    if (getApiBaseUrl()) return undefined;
+    if (!isDemoMode()) return undefined;
     return getLocalProducts().find((item) => item.id === productId) ?? null;
   });
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
+  const [selected, setSelected] = useState({});
   const frameRef = useRef(null);
   const imgRef = useRef(null);
 
   useEffect(() => {
     let live = true;
-    if (!getApiBaseUrl()) {
+    if (isDemoMode()) {
       const local = getLocalProducts().find((item) => item.id === productId) ?? null;
       setProduct(local);
       setActive(0);
+      setSelected({});
       document.title = local ? `${local.name} | Daykodee` : "PLACEHOLDER — Product | Daykodee";
       return undefined;
     }
@@ -35,6 +55,7 @@ export function Product() {
         if (!live) return;
         setProduct(item);
         setActive(0);
+        setSelected(initialSelection(item));
         document.title = item ? `${item.name} | Daykodee` : "PLACEHOLDER — Product | Daykodee";
       })
       .catch(() => {
@@ -110,7 +131,13 @@ export function Product() {
     );
   }
 
-  const image = product.images[active] ?? product.images[0];
+  const image = product.images?.[active] ?? product.images?.[0];
+  const options = product.options || [];
+  const variant = matchVariant(product, selected);
+  const priceLabel = variant?.priceLabel || product.priceLabel;
+  const stockLabel = variant ? (variant.inStock ? "In stock" : "Out of stock") : product.stockLabel;
+  const needsVariant = options.length > 0 && (product.variants || []).length > 0;
+  const canAdd = needsVariant ? Boolean(variant && variant.inStock !== false) : product.stockStatus !== "out_of_stock";
 
   return (
     <article className="section product-page">
@@ -134,7 +161,7 @@ export function Product() {
               />
             </div>
             <div className="gallery__thumbs">
-              {product.images.map((shot, index) => (
+              {(product.images || []).map((shot, index) => (
                 <button
                   key={`${product.id}-${index}`}
                   type="button"
@@ -153,20 +180,41 @@ export function Product() {
             <div className="product-copy">
               <h1>{product.name}</h1>
               <p>{product.description}</p>
-              <p className="product-price">{product.priceLabel}</p>
+              <p className="product-price">{priceLabel}</p>
+              {stockLabel ? <p className="product-stock">{stockLabel}</p> : null}
+              {options.map((option) => (
+                <fieldset key={option.name} className="product-option">
+                  <legend>{option.name}</legend>
+                  <div className="product-option__choices">
+                    {option.choices.map((choice) => (
+                      <button
+                        key={choice.value}
+                        type="button"
+                        aria-pressed={selected[option.name] === choice.value}
+                        disabled={choice.inStock === false}
+                        onClick={() => setSelected((current) => ({ ...current, [option.name]: choice.value }))}
+                      >
+                        {choice.value}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              ))}
             </div>
             <div className="buy">
               <p className="buy__name">{product.name}</p>
-              <p className="buy__price">{product.priceLabel}</p>
+              <p className="buy__price">{priceLabel}</p>
+              {stockLabel ? <p className="product-stock">{stockLabel}</p> : null}
               <button
                 className="btn btn--gold"
                 type="button"
+                disabled={!canAdd}
                 onClick={() => {
-                  add(product);
-                  navigate("/checkout");
+                  if (!canAdd) return;
+                  add({ product, variant, quantity: 1 });
                 }}
               >
-                Start an Order
+                {canAdd ? "Add to Cart" : "Out of stock"}
                 <span className="btn__sweep" aria-hidden="true" />
               </button>
             </div>

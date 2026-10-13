@@ -8,6 +8,21 @@ export function mediaUrl(file) {
 
 export function MediaPicture({ image, sizes = DEFAULT_SIZES, loading = "lazy", fetchPriority, className, ref }) {
   if (!image) return null;
+  if (image.url) {
+    return (
+      <img
+        ref={ref}
+        className={className}
+        src={image.url}
+        alt={image.alt || ""}
+        width={image.width || 1280}
+        height={image.height || 720}
+        loading={loading}
+        decoding="async"
+        fetchPriority={fetchPriority}
+      />
+    );
+  }
   if (image.set) {
     const id = image.set;
     const src = (ext, width) => mediaUrl(`${id}-${width}.${ext}`);
