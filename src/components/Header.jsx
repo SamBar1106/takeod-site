@@ -1,31 +1,22 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import gsap from "gsap";
-import { Flip } from "gsap/Flip";
 import { MEDIA } from "../config.js";
-import { prefersReducedMotion } from "../lib/motion.js";
 import { useCart } from "../context/CartContext.jsx";
 import { AppLink } from "./AppLink.jsx";
 
-gsap.registerPlugin(Flip);
-
 const LINKS = [
   { to: "/shop", label: "Shop" },
-  { to: "/#categories", label: "Categories" },
-  { to: "/#ordering", label: "Ordering" },
-  { to: "/#why", label: "Why Daykodee" },
-  { to: "/#about", label: "About" },
+  { to: "/about", label: "About" },
+  { to: "/faq", label: "FAQ" },
+  { to: "/contact", label: "Contact" },
+  { to: "/contact", label: "Bulk Quote" },
 ];
 
 export function Header() {
   const location = useLocation();
-  const brandRef = useRef(null);
-  const shrunkRef = useRef(false);
-  const flipRef = useRef(null);
-  const bootRef = useRef(true);
   const [open, setOpen] = useState(false);
-  const [shrunk, setShrunk] = useState(false);
   const { count, openDrawer } = useCart();
+  const shop = location.pathname.startsWith("/shop") || location.pathname.startsWith("/category");
 
   useEffect(() => {
     setOpen(false);
@@ -36,67 +27,50 @@ export function Header() {
     return () => document.body.classList.remove("nav-open");
   }, [open]);
 
-  useEffect(() => {
-    const onKey = (event) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const next = window.scrollY > 24;
-      if (next === shrunkRef.current) return;
-      if (!bootRef.current && brandRef.current && !prefersReducedMotion()) {
-        flipRef.current = Flip.getState(brandRef.current);
-      }
-      shrunkRef.current = next;
-      setShrunk(next);
-    };
-    onScroll();
-    bootRef.current = false;
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useLayoutEffect(() => {
-    if (!flipRef.current || !brandRef.current) return undefined;
-    const state = flipRef.current;
-    flipRef.current = null;
-    const tween = Flip.from(state, {
-      duration: 0.45,
-      ease: "power3.inOut",
-      absolute: true,
-      nested: true,
-    });
-    return () => tween?.kill();
-  }, [shrunk]);
-
   return (
-    <header className={`site-header${shrunk ? " is-shrunk" : ""}`}>
-      <div className="wrap site-header__bar">
-        <AppLink className="brand" to="/#main" ref={brandRef}>
-          <picture>
-            <source srcSet={`${MEDIA}logo.webp`} type="image/webp" />
-            <img className="brand__img" src={`${MEDIA}logo.png`} alt="Daykodee" width="720" height="473" />
-          </picture>
+    <header className="site-header">
+      <div className="announce" role="region" aria-label="Center notice">
+        <p className="announce__track">
+          <span>★ Official Gear Partner of Family Affair Childcare Centers | Bulk Discounts Applied Automatically at 25+ Units | Fast Shipping to All Locations ★</span>
+          <span aria-hidden="true">★ Official Gear Partner of Family Affair Childcare Centers | Bulk Discounts Applied Automatically at 25+ Units | Fast Shipping to All Locations ★</span>
+        </p>
+      </div>
+      <div className="site-header__bar">
+        <AppLink className="brand" to="/">
+          <img className="brand__img" src={`${MEDIA}logo.webp`} alt="Daykodee" width="720" height="473" />
+          <span className="brand__word">Daykodee</span>
         </AppLink>
         <nav className={`site-nav${open ? " is-open" : ""}`} id="site-nav" aria-label="Primary">
           {LINKS.map((link) => (
-            <AppLink key={link.label} to={link.to} onClick={() => setOpen(false)}>
+            <AppLink
+              key={link.label}
+              to={link.to}
+              aria-current={link.label === "Shop" && shop ? "page" : undefined}
+              onClick={() => setOpen(false)}
+            >
               {link.label}
             </AppLink>
           ))}
         </nav>
         <div className="header-tools">
+          <AppLink className="icon-btn" to="/shop" aria-label="Search catalog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path d="M16 16l5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </AppLink>
           <button className="cart-toggle" type="button" onClick={openDrawer} aria-label={`Cart, ${count} items`}>
-            Cart
-            <span className="cart-toggle__count">{count}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path d="M9 8V7a3 3 0 0 1 6 0v1" fill="none" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            <span className="cart-toggle__count">
+              <span className="cart-toggle__n">{count}</span>
+              <span className="cart-toggle__label"> items</span>
+            </span>
           </button>
-          <AppLink className="btn btn--gold header-cta" to="/contact">
-            Request a Quote
-            <span className="btn__sweep" aria-hidden="true" />
+          <AppLink className="director" to="/contact">
+            Director
           </AppLink>
           <button
             className="nav-toggle"

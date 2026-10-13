@@ -4,10 +4,10 @@ import { prefersReducedMotion } from "../lib/motion.js";
 import { Accordion } from "../components/Accordion.jsx";
 
 const PAGES = {
-  faq: "PLACEHOLDER — FAQ",
-  shipping: "PLACEHOLDER — Shipping",
-  privacy: "PLACEHOLDER — Privacy",
-  terms: "PLACEHOLDER — Terms",
+  faq: "Frequently Asked Questions",
+  shipping: "Direct-to-Center Shipping",
+  privacy: "Privacy Policy",
+  terms: "Terms of Service",
 };
 
 export function InfoPage({ page }) {

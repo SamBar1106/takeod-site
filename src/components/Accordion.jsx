@@ -2,7 +2,7 @@ import { useId, useRef, useState } from "react";
 import gsap from "gsap";
 import { prefersReducedMotion } from "../lib/motion.js";
 
-export function Accordion({ heading }) {
+export function Accordion({ heading, children }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const panelId = useId();
@@ -35,7 +35,7 @@ export function Accordion({ heading }) {
         </button>
       </h2>
       <div className="accordion__panel" id={panelId} ref={panelRef} style={{ height: open ? "auto" : 0 }}>
-        <p>PLACEHOLDER</p>
+        {children || <p>PLACEHOLDER</p>}
       </div>
     </div>
   );

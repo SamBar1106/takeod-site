@@ -21,7 +21,8 @@ export function Cart() {
     <section className="section info cart-page">
       <div className="section__stage">
         <div className="wrap">
-          <h1>Cart</h1>
+          <h1>Your Center Cart</h1>
+          <p>Bulk discounts apply automatically at 25+ units.</p>
           <CartLines items={items} />
           {error ? <p className="cart-note">{error}</p> : null}
           {items.length ? (
@@ -31,14 +32,12 @@ export function Cart() {
                 <span>{subtotalLabel}</span>
               </p>
               <button className="btn btn--gold" type="button" disabled={busy} onClick={onCheckout}>
-                Checkout
-                <span className="btn__sweep" aria-hidden="true" />
+                Proceed to Checkout
               </button>
             </>
           ) : (
             <AppLink className="btn btn--gold" to="/shop">
               Shop Products
-              <span className="btn__sweep" aria-hidden="true" />
             </AppLink>
           )}
         </div>

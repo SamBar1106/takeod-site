@@ -5,7 +5,7 @@ import { AppLink } from "./AppLink.jsx";
 import { CartLines } from "./CartLines.jsx";
 
 export function CartDrawer() {
-  const { items, subtotalLabel, drawerOpen, closeDrawer, checkout, busy, error } = useCart();
+  const { items, count, subtotalLabel, drawerOpen, closeDrawer, checkout, busy, error } = useCart();
   const closeRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,6 +13,11 @@ export function CartDrawer() {
   useEffect(() => {
     closeDrawer();
   }, [location.pathname, closeDrawer]);
+
+  useEffect(() => {
+    document.body.classList.toggle("drawer-open", drawerOpen);
+    return () => document.body.classList.remove("drawer-open");
+  }, [drawerOpen]);
 
   useEffect(() => {
     if (!drawerOpen) return undefined;
@@ -39,29 +44,52 @@ export function CartDrawer() {
       <button className="cart-drawer__shade" type="button" aria-label="Close cart" onClick={closeDrawer} />
       <div className="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
         <div className="cart-drawer__bar">
-          <h2 id="cart-drawer-title">Cart</h2>
+          <div>
+            <h2 id="cart-drawer-title">Your Center Cart</h2>
+            <p className="cart-meta">
+              {items.length} {items.length === 1 ? "Product" : "Products"}
+              {count !== items.length ? ` · ${count} Units` : ""}
+            </p>
+          </div>
           <button ref={closeRef} type="button" onClick={closeDrawer}>
             Close
           </button>
         </div>
+        <p className="tier-note--drawer">Bulk discounts apply automatically at 25+ units.</p>
         <CartLines items={items} />
+        {!items.length ? <p>Your center cart is empty.</p> : null}
         {error ? <p className="cart-note">{error}</p> : null}
         {items.length ? (
-          <p className="cart-subtotal">
-            <span>Subtotal</span>
-            <span>{subtotalLabel}</span>
-          </p>
+          <div className="cart-totals">
+            <p className="cart-subtotal">
+              <span>Subtotal</span>
+              <span>{subtotalLabel}</span>
+            </p>
+            <p>
+              <span>Campus Direct Freight</span>
+              <span>At checkout</span>
+            </p>
+            <p className="cart-total">
+              <span>Total Investment</span>
+              <span>{subtotalLabel}</span>
+            </p>
+          </div>
         ) : null}
         <div className="cart-drawer__actions">
-          <AppLink className="btn btn--primary" to="/cart" onClick={closeDrawer}>
-            Cart
-            <span className="btn__sweep" aria-hidden="true" />
-          </AppLink>
           <button className="btn btn--gold" type="button" disabled={busy || !items.length} onClick={onCheckout}>
-            Checkout
-            <span className="btn__sweep" aria-hidden="true" />
+            Proceed to Checkout
           </button>
+          <AppLink className="btn btn--ghost" to="/cart" onClick={closeDrawer}>
+            View Cart
+          </AppLink>
+          <AppLink className="btn btn--ghost" to="/contact" onClick={closeDrawer}>
+            Download Formal Purchase Order Quote PDF
+          </AppLink>
         </div>
+        <p className="cart-assure">
+          <span>Net-30 Available</span>
+          <span>100% Reprint Guarantee</span>
+        </p>
       </div>
     </div>
   );

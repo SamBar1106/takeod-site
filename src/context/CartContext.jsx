@@ -26,18 +26,46 @@ function writeDemoCart(items) {
   sessionStorage.setItem(DEMO_CART_KEY, JSON.stringify(items));
 }
 
+function parseMoney(label) {
+  const match = String(label || "").replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  return Number.isFinite(amount) ? amount : null;
+}
+
+function formatMoney(amount) {
+  return `$${amount.toFixed(2)}`;
+}
+
+export function lineTotal(item) {
+  const unit = parseMoney(item.priceLabel);
+  if (unit == null) return item.lineTotalLabel || item.priceLabel || "";
+  return formatMoney(unit * (item.quantity || 1));
+}
+
+function demoSubtotal(items) {
+  if (!items.length) return "";
+  const amounts = items.map((item) => {
+    const unit = parseMoney(item.priceLabel);
+    return unit == null ? null : unit * (item.quantity || 1);
+  });
+  if (amounts.some((amount) => amount == null)) return "PLACEHOLDER";
+  return formatMoney(amounts.reduce((sum, amount) => sum + amount, 0));
+}
+
 function demoLine(product, variant, quantity) {
   const variantId = variant?.id || "default";
   const optionsLabel = Object.entries(variant?.choices || {})
     .map(([name, value]) => `${name}: ${value}`)
     .join(", ");
+  const priceLabel = variant?.priceLabel || product.priceLabel || "PLACEHOLDER";
   return {
     id: `${product.id}:${variantId}`,
     productId: product.id,
     name: product.name,
     quantity,
-    priceLabel: variant?.priceLabel || product.priceLabel || "PLACEHOLDER",
-    lineTotalLabel: variant?.priceLabel || product.priceLabel || "PLACEHOLDER",
+    priceLabel,
+    lineTotalLabel: priceLabel,
     optionsLabel,
     image: product.images?.[0] || null,
   };
@@ -54,7 +82,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     if (demo) {
       writeDemoCart(items);
-      setSubtotalLabel(items.length ? "PLACEHOLDER" : "");
+      setSubtotalLabel(demoSubtotal(items));
     }
   }, [demo, items]);
 
