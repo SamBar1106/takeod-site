@@ -59,46 +59,6 @@ body.nav-open {
   transform: translate3d(100%, 0, 0);
 }
 
-.cursor-ring,
-.cursor-dot {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 80;
-  pointer-events: none;
-  border-radius: 50%;
-}
-
-.cursor-ring {
-  width: 36px;
-  height: 36px;
-  border: 2px solid var(--gold);
-  background: transparent;
-}
-
-.cursor-ring.is-hot {
-  transform: scale(1.35);
-  background: rgba(212, 160, 23, 0.2);
-}
-
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--navy);
-  border: 1px solid var(--gold);
-}
-
-html.has-cursor,
-html.has-cursor * {
-  cursor: none !important;
-}
-
-html.has-cursor .cursor-ring,
-html.has-cursor .cursor-dot {
-  display: block;
-}
-
 @media (min-width: 768px) {
   .site-header.is-shrunk .site-header__bar {
     display: grid;
