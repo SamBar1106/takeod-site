@@ -8,15 +8,6 @@ import { AppLink } from "../components/AppLink.jsx";
 import { MediaPicture } from "../components/MediaPicture.jsx";
 import { Accordion } from "../components/Accordion.jsx";
 
-function initialSelection(product) {
-  const selected = {};
-  for (const option of product?.options || []) {
-    const available = (option.choices || []).find((choice) => choice.inStock !== false) || option.choices?.[0];
-    if (option.name && available?.value) selected[option.name] = available.value;
-  }
-  return selected;
-}
-
 function matchVariant(product, selected) {
   const variants = product?.variants || [];
   if (!variants.length) return null;
@@ -48,7 +39,7 @@ export function Product() {
       const local = getLocalProducts().find((item) => item.id === productId) ?? null;
       setProduct(local);
       setActive(0);
-      setSelected(initialSelection(local));
+      setSelected({});
       document.title = local ? `${local.name} | Daykodee` : "PLACEHOLDER — Product | Daykodee";
       return undefined;
     }
@@ -58,7 +49,7 @@ export function Product() {
         if (!live) return;
         setProduct(item);
         setActive(0);
-        setSelected(initialSelection(item));
+        setSelected({});
         document.title = item ? `${item.name} | Daykodee` : "PLACEHOLDER — Product | Daykodee";
       })
       .catch(() => {
@@ -125,12 +116,16 @@ export function Product() {
   }
 
   const image = product.images?.[active] ?? product.images?.[0];
-  const options = product.options || [];
+  const options = (product.options || []).filter((option) => option.choices?.length);
   const variant = matchVariant(product, selected);
   const priceLabel = variant?.priceLabel || product.priceLabel;
   const stockLabel = variant ? (variant.inStock ? "In stock" : "Out of stock") : product.stockLabel;
-  const needsVariant = options.length > 0 && (product.variants || []).length > 0;
-  const canAdd = needsVariant ? Boolean(variant && variant.inStock !== false) : product.stockStatus !== "out_of_stock";
+  const needsOptions = options.length > 0;
+  const selectionComplete = options.every((option) => selected[option.name]);
+  const canAdd = needsOptions
+    ? Boolean(selectionComplete && variant && variant.inStock !== false)
+    : product.stockStatus !== "out_of_stock";
+  const addLabel = canAdd ? "Add to Order & Apply Bulk Tier" : needsOptions && !selectionComplete ? "Select options" : "Out of stock";
   const related = isDemoMode() ? getLocalProducts().filter((item) => item.id !== product.id).slice(0, 3) : [];
 
   return (
@@ -188,6 +183,7 @@ export function Product() {
                     disabled={choice.inStock === false}
                     onClick={() => setSelected((current) => ({ ...current, [option.name]: choice.value }))}
                   >
+                    {choice.color ? <span className="swatch" style={{ background: choice.color }} aria-hidden="true" /> : null}
                     {choice.value}
                   </button>
                 ))}
@@ -222,7 +218,7 @@ export function Product() {
               add({ product, variant, quantity });
             }}
           >
-            {canAdd ? "Add to Order & Apply Bulk Tier" : "Out of stock"}
+            {addLabel}
           </button>
           <AppLink className="btn btn--line" to="/contact">
             Request Free Campus Sample

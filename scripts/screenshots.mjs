@@ -22,7 +22,7 @@ const routes = [
 
 const errors = [];
 
-async function prepare(page, route) {
+async function prepare(page, route, name, label) {
   const failed = [];
   page.on("pageerror", (error) => failed.push(error.message));
   await page.goto(`${base}${route}`, { waitUntil: "load", timeout: 60000 });
@@ -35,6 +35,13 @@ async function prepare(page, route) {
   if (text.length < 8) failed.push(`empty main for ${route}`);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   if (overflow > 2) failed.push(`horizontal overflow ${overflow}px on ${route}`);
+  if (name === "shop" && label === "390") {
+    const productTop = await page.locator(".product-card").first().evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      return Math.round(rect.top + window.scrollY);
+    });
+    if (productTop > 1100) failed.push(`products start ${productTop}px down`);
+  }
   return failed;
 }
 
@@ -43,12 +50,28 @@ async function shoot(browserType, label, contextOptions) {
   const context = await browser.newContext(contextOptions);
   const page = await context.newPage();
   for (const [name, route] of routes) {
-    const failed = await prepare(page, route);
+    const failed = await prepare(page, route, name, label);
     if (failed.length) errors.push(`${label} ${name}: ${failed.join("; ")}`);
     await page.screenshot({
       path: path.join(outDir, `${name}-${label}.png`),
       fullPage: true,
     });
+  }
+  await page.goto(`${base}/shop/sample-shirt`, { waitUntil: "load", timeout: 60000 });
+  await page.waitForTimeout(400);
+  const sizeButton = page.getByRole("button", { name: "2T" });
+  const selectOptions = page.getByRole("button", { name: "Select options" });
+  if (!(await sizeButton.count()) || !(await selectOptions.isDisabled())) {
+    errors.push(`${label} shirt option picker did not require a size`);
+  } else {
+    await sizeButton.click();
+    await page.getByRole("button", { name: "Add to Order & Apply Bulk Tier" }).click();
+    await page.waitForSelector(".cart-drawer", { timeout: 5000 });
+    const shirtDrawer = await page.locator(".cart-drawer").innerText();
+    if (!shirtDrawer.includes("Toddler Tee") || !shirtDrawer.includes("Size: 2T")) {
+      errors.push(`${label} shirt cart line missing size`);
+    }
+    await page.screenshot({ path: path.join(outDir, `shirt-options-${label}.png`) });
   }
   await page.goto(`${base}/shop/sample-mug`, { waitUntil: "load", timeout: 60000 });
   await page.getByRole("button", { name: "Add to Order & Apply Bulk Tier" }).click();
@@ -113,6 +136,10 @@ const muted = await page.goto(`${base}/`, { waitUntil: "load" }).then(async () =
   })),
 );
 if (!muted.muted || !muted.playsInline) errors.push(`hero video attrs ${JSON.stringify(muted)}`);
+const homeText = await page.locator("main").innerText();
+if (homeText.includes("View All 32 Products") || !/View All \d+ Products/.test(homeText)) {
+  errors.push(`home catalog count missing in "${homeText.slice(0, 400)}"`);
+}
 const cursor = await page.evaluate(() => ({
   html: document.documentElement.className,
   cursor: getComputedStyle(document.body).cursor,
