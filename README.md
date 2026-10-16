@@ -13,14 +13,14 @@ npm install
 npm run dev
 ```
 
-The dev server uses the GitHub Pages base path `/takeod-site/`.
+The dev server and production build use the site root `/`, so assets and routes load from https://daykodee.com/.
 
 ```bash
 npm run build
 npm run preview
 ```
 
-Pushes to `main` build and deploy to GitHub Pages: https://sambar1106.github.io/takeod-site/
+Pushes to `main` build and deploy to GitHub Pages at https://daykodee.com/ (`public/CNAME`).
 
 The production build copies `index.html` to `dist/404.html` so GitHub Pages can serve the router on direct links.
 
@@ -32,10 +32,10 @@ Create a public OAuth client in the Wix dashboard. Do not create an API key.
 2. Go to **Settings → Development & integrations → Headless Settings**.
 3. Under Headless clients, click **Create New Client**. Name it, choose the client type, then click **Create & Continue**.
 4. Copy the client ID. Do not copy an API key.
-5. Open that client's **Settings**. Under **URLs → Allowed redirect domains**, click **Add Redirect Domain** and enter `sambar1106.github.io`, then save. That domain covers the return to `https://sambar1106.github.io/takeod-site/thank-you`.
+5. Open that client's **Settings**. Under **URLs → Allowed redirect domains**, click **Add Redirect Domain** and enter `daykodee.com`, then save. That domain covers the return to `https://daykodee.com/thank-you`.
 6. Locally, copy `.env.example` to `.env` and set `VITE_WIX_CLIENT_ID` to that client ID.
 7. In the GitHub repository, add a repository variable named `VITE_WIX_CLIENT_ID` with the same client ID. The Pages workflow passes `vars.VITE_WIX_CLIENT_ID` into the production build. An empty variable keeps the deployed site in demo mode.
 
-Checkout creates a checkout from the current cart, then opens the Wix-hosted checkout with `redirects.createRedirectSession`. Both `postFlowUrl` and `thankYouPageUrl` are `https://sambar1106.github.io/takeod-site/thank-you`.
+Checkout creates a checkout from the current cart, then opens the Wix-hosted checkout with `redirects.createRedirectSession`. Both `postFlowUrl` and `thankYouPageUrl` are `https://daykodee.com/thank-you`.
 
 Catalog calls are read-only queries. The site does not create, update, or delete Wix products. Cart and checkout use the visitor's current cart session.

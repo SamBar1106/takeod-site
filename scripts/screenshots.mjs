@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { chromium, webkit, devices } from "playwright";
 
-const base = (process.env.SCREENSHOT_BASE || "http://127.0.0.1:4173/takeod-site").replace(/\/$/, "");
+const base = (process.env.SCREENSHOT_BASE || "http://127.0.0.1:4173").replace(/\/$/, "");
 const outDir = process.env.SCREENSHOT_DIR || "/opt/cursor/artifacts/screenshots";
 fs.mkdirSync(outDir, { recursive: true });
 

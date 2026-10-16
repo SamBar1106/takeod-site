@@ -16,7 +16,7 @@ export function Layout() {
     if (!link) return;
     const root = import.meta.env.BASE_URL.replace(/\/$/, "");
     const path = location.pathname === "/" ? "/" : location.pathname;
-    link.setAttribute("href", `https://sambar1106.github.io${root}${path}`);
+    link.setAttribute("href", `https://daykodee.com${root}${path}`);
   }, [location.pathname]);
 
   return (
