@@ -5,7 +5,7 @@ import { redirects } from "@wix/redirects";
 
 const CLIENT_ID = String(import.meta.env.VITE_WIX_CLIENT_ID || "").trim();
 const SESSION_KEY = "wixSession";
-const CANONICAL_ORIGIN = "https://sambar1106.github.io";
+const CANONICAL_ORIGIN = "https://daykodee.com";
 
 export const STORES_APP_ID = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
 

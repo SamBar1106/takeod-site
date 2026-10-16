@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  let base = env.VITE_BASE || process.env.VITE_BASE || "/takeod-site/";
+  let base = env.VITE_BASE || process.env.VITE_BASE || "/";
   if (!base.endsWith("/")) base += "/";
 
   return {

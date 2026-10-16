@@ -22,7 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          VITE_BASE: /takeod-site/
+          VITE_BASE: /
           VITE_WIX_CLIENT_ID: ${{ vars.VITE_WIX_CLIENT_ID }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
