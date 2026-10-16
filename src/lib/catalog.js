@@ -35,6 +35,10 @@ function plainText(value) {
     .trim();
 }
 
+function safeColor(value) {
+  return /^#[0-9a-fA-F]{3,8}$/.test(String(value || "")) ? value : "";
+}
+
 function wordHit(text, word) {
   return new RegExp(`\\b${word}\\b`, "i").test(text);
 }
@@ -129,6 +133,7 @@ function normalizeV1(product, catalogCollections) {
       choices: (option.choices || []).map((choice) => ({
         value: choice.value || choice.description || "",
         key: choice.value || choice.description || "",
+        color: safeColor(choice.colorCode),
         inStock: choice.inStock !== false,
       })),
     })),
@@ -167,7 +172,8 @@ function normalizeV3(product, catalogCollections) {
       choices: (option.choicesSettings?.choices || []).map((choice) => ({
         value: choice.name || "",
         key: choice.key || choice.name || "",
-        inStock: choice.inStock !== false,
+        color: safeColor(choice.colorCode),
+        inStock: choice.inStock !== false && choice.visible !== false,
       })),
     })),
     variants: (product.variantsInfo?.variants || []).map((variant) => {

@@ -188,12 +188,14 @@ export function Shop() {
           {status === "error" ? <p className="cart-note">The catalog could not be loaded.</p> : null}
           <fieldset>
             <legend>Product Categories</legend>
-            {filters.map((item) => (
-              <button key={item.slug} type="button" aria-pressed={filter === item.slug} onClick={() => choose(item.slug)}>
-                <span>{item.label}</span>
-                <span>{counts[item.slug] || 0}</span>
-              </button>
-            ))}
+            <div className="filters__chips">
+              {filters.map((item) => (
+                <button key={item.slug} type="button" aria-pressed={filter === item.slug} onClick={() => choose(item.slug)}>
+                  <span>{item.label}</span>
+                  <span>{counts[item.slug] || 0}</span>
+                </button>
+              ))}
+            </div>
           </fieldset>
           <div className="filter-note">
             <h3>Price Range</h3>
@@ -252,9 +254,15 @@ export function Shop() {
                       ) : null}
                     </div>
                     {product.stockLabel ? <p className="stock">{product.stockLabel}</p> : null}
-                    <button className="btn btn--gold" type="button" onClick={() => add({ product, quantity: 1 })}>
-                      {product.shopLabel || "Add / Bulk Quote"}
-                    </button>
+                    {product.options?.some((option) => option.choices?.length) ? (
+                      <AppLink className="btn btn--gold" to={`/shop/${product.id}`}>
+                        Select options
+                      </AppLink>
+                    ) : (
+                      <button className="btn btn--gold" type="button" onClick={() => add({ product, quantity: 1 })}>
+                        {product.shopLabel || "Add / Bulk Quote"}
+                      </button>
+                    )}
                   </div>
                 </article>
               );

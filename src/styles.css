@@ -889,6 +889,10 @@ h2 {
   margin-top: 0.8rem;
 }
 
+.filters__chips {
+  display: contents;
+}
+
 .filters button {
   display: flex;
   justify-content: space-between;
@@ -1058,6 +1062,9 @@ h2 {
 }
 
 .product-option__choices button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   min-height: 44px;
   padding: 0.4rem 0.75rem;
   border-radius: 999px;
@@ -1065,6 +1072,13 @@ h2 {
   background: transparent;
   font-weight: 700;
   cursor: pointer;
+}
+
+.swatch {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 39, 108, 0.35);
 }
 
 .product-option__choices button[aria-pressed="true"] {
@@ -1476,6 +1490,36 @@ h2 {
 }
 
 @media (max-width: 1023px) {
+  .filters {
+    min-width: 0;
+  }
+
+  .filters fieldset {
+    display: block;
+    min-width: 0;
+  }
+
+  .filters__chips {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: 0.2rem;
+  }
+
+  .filters__chips button {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .filter-note,
+  .filter-help {
+    display: none;
+  }
+
   .site-nav {
     position: absolute;
     left: 0;

@@ -30,6 +30,27 @@
       "tierLabel": "Tier 25+",
       "tierPrice": "$7.50 / ea",
       "description": "100% ring-spun organic cotton, wash-proof colors.",
+      "options": [
+        {
+          "name": "Size",
+          "choices": [
+            { "value": "2T", "inStock": true },
+            { "value": "3T", "inStock": true },
+            { "value": "4T", "inStock": true },
+            { "value": "Youth S", "inStock": true },
+            { "value": "Youth M", "inStock": true },
+            { "value": "Youth L", "inStock": true }
+          ]
+        }
+      ],
+      "variants": [
+        { "id": "sample-shirt-2t", "choices": { "Size": "2T" }, "choiceKeys": { "Size": "2T" }, "priceLabel": "$12.00", "inStock": true },
+        { "id": "sample-shirt-3t", "choices": { "Size": "3T" }, "choiceKeys": { "Size": "3T" }, "priceLabel": "$12.00", "inStock": true },
+        { "id": "sample-shirt-4t", "choices": { "Size": "4T" }, "choiceKeys": { "Size": "4T" }, "priceLabel": "$12.00", "inStock": true },
+        { "id": "sample-shirt-ys", "choices": { "Size": "Youth S" }, "choiceKeys": { "Size": "Youth S" }, "priceLabel": "$12.00", "inStock": true },
+        { "id": "sample-shirt-ym", "choices": { "Size": "Youth M" }, "choiceKeys": { "Size": "Youth M" }, "priceLabel": "$12.00", "inStock": true },
+        { "id": "sample-shirt-yl", "choices": { "Size": "Youth L" }, "choiceKeys": { "Size": "Youth L" }, "priceLabel": "$12.00", "inStock": true }
+      ],
       "images": [
         { "set": "c1", "alt": "Branded shirts and hats" },
         { "file": "poster-h4.webp", "alt": "Branded tees", "width": 1280, "height": 720 }

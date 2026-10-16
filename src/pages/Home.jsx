@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { MEDIA } from "../config.js";
+import { getProducts } from "../lib/catalog.js";
 import { prefersReducedMotion, whenFontsReady } from "../lib/motion.js";
 import { AppLink } from "../components/AppLink.jsx";
 import { mountHomeMotion } from "./homeMotion.js";
@@ -83,9 +84,24 @@ const WHY = [
 
 export function Home() {
   const rootRef = useRef(null);
+  const [catalogCount, setCatalogCount] = useState(null);
 
   useEffect(() => {
     document.title = "Daykodee | Branded Kids' Gear for Family Affair Centers";
+  }, []);
+
+  useEffect(() => {
+    let live = true;
+    getProducts()
+      .then((items) => {
+        if (live) setCatalogCount(Array.isArray(items) ? items.length : null);
+      })
+      .catch(() => {
+        if (live) setCatalogCount(null);
+      });
+    return () => {
+      live = false;
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -177,7 +193,7 @@ export function Home() {
               <h2>Shop by Category</h2>
               <p>Explore everyday childcare essentials designed for little learners, classroom sanity, and proud center staff.</p>
             </div>
-            <AppLink to="/shop">View All 32 Products</AppLink>
+            <AppLink to="/shop">{catalogCount == null ? "View all products" : `View All ${catalogCount} Products`}</AppLink>
           </div>
           <div className="cat-grid">
             {CATEGORIES.map((item) => (
